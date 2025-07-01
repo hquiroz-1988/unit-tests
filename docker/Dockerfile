@@ -9,7 +9,9 @@ RUN autoreconf . -i && \
     make tdd && \
     make install 
 
-ENV CPPUTEST_HOME=/opt/cpputest
+ENV CPPUTEST_HOME=/opt/cpputest \
+    PROJECT_ROOT=/home \
+    ESP_SDK_HOME=/home/ESP8266_RTOS_SDK
 
 # Install leagcy-build
 WORKDIR /opt/legacy-build
