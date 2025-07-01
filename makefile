@@ -2,7 +2,7 @@
 SILENCE = @
 
 #---- Outputs ----#
-COMPONENT_NAME = your
+COMPONENT_NAME = solar-meter
 
 #--- Inputs ----#
 PROJECT_HOME_DIR = .
@@ -36,7 +36,10 @@ SRC_DIRS += example-platform
 # TEST_SRC_FILES specifies individual test files to build.
 # TEST_SRC_DIRS, builds everything in the directory
 
-TEST_SRC_FILES +=
+# Test Source Files
+TEST_SRC_FILES += tests/solar_meter/ads1115_tests.cpp
+
+# Test Source Directories
 TEST_SRC_DIRS += tests
 TEST_SRC_DIRS += tests/io-cppumock
 TEST_SRC_DIRS += tests/printf-spy
@@ -61,6 +64,20 @@ INCLUDE_DIRS += example-include
 INCLUDE_DIRS += example-fff
 INCLUDE_DIRS += tests/exploding-fakes
 INCLUDE_DIRS += tests/fff
+# Solar Meter Includes
+INCLUDE_DIRS += $(PROJECT_ROOT)/solar_meter/main
+
+INCLUDE_DIRS += $(PROJECT_ROOT)/ESP8266_RTOS_SDK/components/freertos/port/esp8266/include
+INCLUDE_DIRS += $(PROJECT_ROOT)/ESP8266_RTOS_SDK/components/freertos/port/esp8266/include/freertos
+INCLUDE_DIRS += $(PROJECT_ROOT)/ESP8266_RTOS_SDK/components/freertos/include
+INCLUDE_DIRS += $(PROJECT_ROOT)/ESP8266_RTOS_SDK/components/freertos/include/freertos
+INCLUDE_DIRS += $(PROJECT_ROOT)/ESP8266_RTOS_SDK/components/freertos/include/freertos/private
+INCLUDE_DIRS += $(PROJECT_ROOT)/ESP8266_RTOS_SDK/components/wear_levelling/test_wl_host/sdkconfig
+INCLUDE_DIRS += $(PROJECT_ROOT)/ESP8266_RTOS_SDK/components/esp8266/include
+INCLUDE_DIRS += $(PROJECT_ROOT)/ESP8266_RTOS_SDK/components/esp_common/include
+INCLUDE_DIRS += $(PROJECT_ROOT)/ESP8266_RTOS_SDK/components/heap/include
+INCLUDE_DIRS += $(PROJECT_ROOT)/ESP8266_RTOS_SDK/components/heap/port/esp8266/include
+
 
 
 # --- CPPUTEST_OBJS_DIR ---
