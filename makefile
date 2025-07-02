@@ -38,7 +38,7 @@ SRC_DIRS += example-platform
 # TEST_SRC_DIRS, builds everything in the directory
 
 # Test Source Files
-TEST_SRC_FILES += tests/solar_meter/ads1115_tests.cpp
+TEST_SRC_FILES += 
 
 # Test Source Directories
 TEST_SRC_DIRS += tests
