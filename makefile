@@ -66,6 +66,7 @@ INCLUDE_DIRS += example-include
 INCLUDE_DIRS += example-fff
 INCLUDE_DIRS += tests/exploding-fakes
 INCLUDE_DIRS += tests/fff
+INCLUDE_DIRS += tests/includes
 # Solar Meter Includes
 INCLUDE_DIRS += $(PROJECT_ROOT)/solar_meter/main
 
