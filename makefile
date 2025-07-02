@@ -25,6 +25,7 @@ endif
 # production code C and CPP files.
 #
 SRC_FILES += example-src/Example.c
+SRC_FILES += $(PROJECT_ROOT)/solar_meter/main/ads1115.cpp
 SRC_DIRS += example-platform
 
 # --- TEST_SRC_FILES and TEST_SRC_DIRS ---
