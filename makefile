@@ -80,6 +80,7 @@ INCLUDE_DIRS += $(PROJECT_ROOT)/ESP8266_RTOS_SDK/components/esp8266/include
 INCLUDE_DIRS += $(PROJECT_ROOT)/ESP8266_RTOS_SDK/components/esp_common/include
 INCLUDE_DIRS += $(PROJECT_ROOT)/ESP8266_RTOS_SDK/components/heap/include
 INCLUDE_DIRS += $(PROJECT_ROOT)/ESP8266_RTOS_SDK/components/heap/port/esp8266/include
+INCLUDE_DIRS += $(PROJECT_ROOT)/ESP8266_RTOS_SDK/components/log/include
 
 
 
