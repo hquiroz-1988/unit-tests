@@ -52,7 +52,8 @@ TEST_SRC_DIRS += tests/printf-spy
 # MOCKS_SRC_DIRS specifies a directories where you can put your
 # mocks, stubs and fakes.  You can also just put them
 # in TEST_SRC_DIRS
-MOCKS_SRC_DIRS +=
+MOCKS_SRC_DIRS += tests/mocks
+
 
 # Turn on CppUMock
 CPPUTEST_USE_EXTENSIONS = Y
