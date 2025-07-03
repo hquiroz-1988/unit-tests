@@ -38,12 +38,13 @@ SRC_DIRS += example-platform
 # TEST_SRC_DIRS, builds everything in the directory
 
 # Test Source Files
-TEST_SRC_FILES += 
+TEST_SRC_FILES += tests/AllTests.cpp
+TEST_SRC_FILES += tests/ads1115_tests.cpp
 
 # Test Source Directories
-TEST_SRC_DIRS += tests
-TEST_SRC_DIRS += tests/io-cppumock
-TEST_SRC_DIRS += tests/printf-spy
+# TEST_SRC_DIRS += tests
+# TEST_SRC_DIRS += tests/io-cppumock
+# TEST_SRC_DIRS += tests/printf-spy
 
 #	tests/example-fff \
 #	tests/fff \
