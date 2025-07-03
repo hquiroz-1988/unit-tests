@@ -13,7 +13,8 @@ extern "C"
 
 
 
-void* xTaskGetCurrentTaskHandle() {
+TaskHandle_t xTaskGetCurrentTaskHandle( void )
+{
     return mock().actualCall("xTaskGetCurrentTaskHandle").returnPointerValueOrDefault(nullptr);
 }
 
