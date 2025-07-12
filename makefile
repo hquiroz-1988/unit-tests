@@ -71,19 +71,19 @@ INCLUDE_DIRS += tests/exploding-fakes
 INCLUDE_DIRS += tests/fff
 INCLUDE_DIRS += tests/includes
 # Solar Meter Includes
-INCLUDE_DIRS += $(PROJECT_ROOT)/solar_meter/main
+INCLUDE_DIRS += ../solar_meter/main
 
-INCLUDE_DIRS += $(PROJECT_ROOT)/ESP8266_RTOS_SDK/components/freertos/port/esp8266/include
-INCLUDE_DIRS += $(PROJECT_ROOT)/ESP8266_RTOS_SDK/components/freertos/port/esp8266/include/freertos
-INCLUDE_DIRS += $(PROJECT_ROOT)/ESP8266_RTOS_SDK/components/freertos/include
-INCLUDE_DIRS += $(PROJECT_ROOT)/ESP8266_RTOS_SDK/components/freertos/include/freertos
-INCLUDE_DIRS += $(PROJECT_ROOT)/ESP8266_RTOS_SDK/components/freertos/include/freertos/private
-# INCLUDE_DIRS += $(PROJECT_ROOT)/ESP8266_RTOS_SDK/components/wear_levelling/test_wl_host/sdkconfig
-INCLUDE_DIRS += $(PROJECT_ROOT)/ESP8266_RTOS_SDK/components/esp8266/include
-INCLUDE_DIRS += $(PROJECT_ROOT)/ESP8266_RTOS_SDK/components/esp_common/include
-INCLUDE_DIRS += $(PROJECT_ROOT)/ESP8266_RTOS_SDK/components/heap/include
-INCLUDE_DIRS += $(PROJECT_ROOT)/ESP8266_RTOS_SDK/components/heap/port/esp8266/include
-INCLUDE_DIRS += $(PROJECT_ROOT)/ESP8266_RTOS_SDK/components/log/include
+INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/freertos/port/esp8266/include
+INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/freertos/port/esp8266/include/freertos
+INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/freertos/include
+INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/freertos/include/freertos
+INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/freertos/include/freertos/private
+# INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/wear_levelling/test_wl_host/sdkconfig
+INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/esp8266/include
+INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/esp_common/include
+INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/heap/include
+INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/heap/port/esp8266/include
+INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/log/include
 
 
 
@@ -145,10 +145,15 @@ CPPUTEST_WARNINGFLAGS += -Wno-unused-parameter
 CPPUTEST_CFLAGS += -pedantic
 CPPUTEST_CFLAGS += -Wno-missing-prototypes
 CPPUTEST_CFLAGS += -Wno-strict-prototypes
+CPPUTEST_CFLAGS += -D__ESP_FILE__=__FILE__
 CPPUTEST_CXXFLAGS += -Wno-c++14-compat
 CPPUTEST_CXXFLAGS += --std=c++11
 CPPUTEST_CXXFLAGS += -Wno-c++98-compat-pedantic
 CPPUTEST_CXXFLAGS += -Wno-c++98-compat
+CPPUTEST_CFLAGS += -fprofile-arcs 
+CPPUTEST_CFLAGS += -ftest-coverage
+
+LFLAGS: -lgcov --coverage
 
 # Coloroze output
 CPPUTEST_EXE_FLAGS += -c
