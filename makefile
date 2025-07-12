@@ -56,6 +56,11 @@ MOCKS_SRC_DIRS += tests/mocks
 # Turn on CppUMock
 CPPUTEST_USE_EXTENSIONS = Y
 
+# Turn on GCOV
+CPPUTEST_USE_GCOV = Y
+
+# GCOV_ARGS += 
+
 # INCLUDE_DIRS are searched in order after the included file's
 # containing directory
 INCLUDE_DIRS += $(CPPUTEST_HOME)/include
