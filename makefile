@@ -153,8 +153,6 @@ CPPUTEST_CXXFLAGS += -Wno-c++98-compat
 CPPUTEST_CFLAGS += -fprofile-arcs 
 CPPUTEST_CFLAGS += -ftest-coverage
 
-LFLAGS: -lgcov --coverage
-
 # Coloroze output
 CPPUTEST_EXE_FLAGS += -c
 
