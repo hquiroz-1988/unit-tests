@@ -1,8 +1,8 @@
 #Set this to @ to keep the makefile quiet
-SILENCE = @
+# SILENCE = 
 
 #---- Outputs ----#
-COMPONENT_NAME = your
+COMPONENT_NAME = solar-meter
 
 #--- Inputs ----#
 PROJECT_HOME_DIR = .
@@ -24,8 +24,8 @@ endif
 # SRC_DIRS specifies directories containing
 # production code C and CPP files.
 #
-SRC_FILES += example-src/Example.c
-SRC_DIRS += example-platform
+# SRC_FILES += ../solar_meter/main/ads1115.cpp
+SRC_DIRS += ../solar_meter/main
 
 # --- TEST_SRC_FILES and TEST_SRC_DIRS ---
 # Test files are always included in the build.
@@ -36,10 +36,12 @@ SRC_DIRS += example-platform
 # TEST_SRC_FILES specifies individual test files to build.
 # TEST_SRC_DIRS, builds everything in the directory
 
-TEST_SRC_FILES +=
-TEST_SRC_DIRS += tests
-TEST_SRC_DIRS += tests/io-cppumock
-TEST_SRC_DIRS += tests/printf-spy
+# Test Source Files
+TEST_SRC_FILES += tests/AllTests.cpp
+TEST_SRC_FILES += tests/ads1115_tests.cpp
+
+# Test Source Directories
+# TEST_SRC_DIRS += tests
 
 #	tests/example-fff \
 #	tests/fff \
@@ -48,10 +50,16 @@ TEST_SRC_DIRS += tests/printf-spy
 # MOCKS_SRC_DIRS specifies a directories where you can put your
 # mocks, stubs and fakes.  You can also just put them
 # in TEST_SRC_DIRS
-MOCKS_SRC_DIRS +=
+MOCKS_SRC_DIRS += tests/mocks
+
 
 # Turn on CppUMock
 CPPUTEST_USE_EXTENSIONS = Y
+
+# Turn on GCOV
+CPPUTEST_USE_GCOV = Y
+
+# GCOV_ARGS += 
 
 # INCLUDE_DIRS are searched in order after the included file's
 # containing directory
@@ -61,6 +69,22 @@ INCLUDE_DIRS += example-include
 INCLUDE_DIRS += example-fff
 INCLUDE_DIRS += tests/exploding-fakes
 INCLUDE_DIRS += tests/fff
+INCLUDE_DIRS += tests/includes
+# Solar Meter Includes
+INCLUDE_DIRS += ../solar_meter/main
+
+INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/freertos/port/esp8266/include
+INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/freertos/port/esp8266/include/freertos
+INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/freertos/include
+INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/freertos/include/freertos
+INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/freertos/include/freertos/private
+# INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/wear_levelling/test_wl_host/sdkconfig
+INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/esp8266/include
+INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/esp_common/include
+INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/heap/include
+INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/heap/port/esp8266/include
+INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/log/include
+
 
 
 # --- CPPUTEST_OBJS_DIR ---
@@ -121,10 +145,13 @@ CPPUTEST_WARNINGFLAGS += -Wno-unused-parameter
 CPPUTEST_CFLAGS += -pedantic
 CPPUTEST_CFLAGS += -Wno-missing-prototypes
 CPPUTEST_CFLAGS += -Wno-strict-prototypes
+CPPUTEST_CFLAGS += -D__ESP_FILE__=__FILE__
 CPPUTEST_CXXFLAGS += -Wno-c++14-compat
 CPPUTEST_CXXFLAGS += --std=c++11
 CPPUTEST_CXXFLAGS += -Wno-c++98-compat-pedantic
 CPPUTEST_CXXFLAGS += -Wno-c++98-compat
+CPPUTEST_CFLAGS += -fprofile-arcs 
+CPPUTEST_CFLAGS += -ftest-coverage
 
 # Coloroze output
 CPPUTEST_EXE_FLAGS += -c
