@@ -25,7 +25,7 @@ endif
 # production code C and CPP files.
 #
 # SRC_FILES += ../solar_meter/main/ads1115.cpp
-SRC_DIRS += ../solar_meter/main
+SRC_DIRS += ../solar_meter/Source/Devices
 
 # --- TEST_SRC_FILES and TEST_SRC_DIRS ---
 # Test files are always included in the build.
@@ -38,7 +38,8 @@ SRC_DIRS += ../solar_meter/main
 
 # Test Source Files
 TEST_SRC_FILES += tests/AllTests.cpp
-TEST_SRC_FILES += tests/ads1115_tests.cpp
+# TEST_SRC_FILES += tests/src/ads1115_tests.cpp
+TEST_SRC_FILES += tests/src/power_monitor_tests.cpp
 
 # Test Source Directories
 # TEST_SRC_DIRS += tests
@@ -70,15 +71,18 @@ INCLUDE_DIRS += example-fff
 INCLUDE_DIRS += tests/exploding-fakes
 INCLUDE_DIRS += tests/fff
 INCLUDE_DIRS += tests/includes
-# Solar Meter Includes
-INCLUDE_DIRS += ../solar_meter/main
 
+# Solar Meter Source Includes
+INCLUDE_DIRS += ../solar_meter/Source/Devices/includes
+INCLUDE_DIRS += ../solar_meter/Source/Peripherals/includes
+INCLUDE_DIRS += ../solar_meter/Source/Common
+
+# ESP8266_RTOS_SDK includes
 INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/freertos/port/esp8266/include
 INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/freertos/port/esp8266/include/freertos
 INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/freertos/include
 INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/freertos/include/freertos
 INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/freertos/include/freertos/private
-# INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/wear_levelling/test_wl_host/sdkconfig
 INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/esp8266/include
 INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/esp_common/include
 INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/heap/include
