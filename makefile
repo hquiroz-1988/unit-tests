@@ -25,7 +25,8 @@ endif
 # production code C and CPP files.
 #
 # SRC_FILES += ../solar_meter/main/ads1115.cpp
-SRC_DIRS += ../solar_meter/Source/Devices
+SRC_DIRS += ../solar_meter/Source/Application	
+SRC_DIRS += ../solar_meter/Source/Middleware	
 
 # --- TEST_SRC_FILES and TEST_SRC_DIRS ---
 # Test files are always included in the build.
@@ -38,7 +39,7 @@ SRC_DIRS += ../solar_meter/Source/Devices
 
 # Test Source Files
 TEST_SRC_FILES += tests/AllTests.cpp
-# TEST_SRC_FILES += tests/src/ads1115_tests.cpp
+# TEST_SRC_FILES += tests/src/ads1115_tests.cpp # TODO: uncomment when ads1115 tests are ready
 TEST_SRC_FILES += tests/src/power_monitor_tests.cpp
 
 # Test Source Directories
@@ -76,6 +77,8 @@ INCLUDE_DIRS += tests/includes
 INCLUDE_DIRS += ../solar_meter/Source/Devices/includes
 INCLUDE_DIRS += ../solar_meter/Source/Peripherals/includes
 INCLUDE_DIRS += ../solar_meter/Source/Common
+INCLUDE_DIRS += ../solar_meter/Source/Application/includes
+INCLUDE_DIRS += ../solar_meter/Source/Middleware/includes
 
 # ESP8266_RTOS_SDK includes
 INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/freertos/port/esp8266/include
