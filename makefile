@@ -153,6 +153,8 @@ CPPUTEST_CFLAGS += -pedantic
 CPPUTEST_CFLAGS += -Wno-missing-prototypes
 CPPUTEST_CFLAGS += -Wno-strict-prototypes
 CPPUTEST_CFLAGS += -D__ESP_FILE__=__FILE__
+CPPUTEST_CFLAGS += -DUNIT_TEST=1
+CPPUTEST_CXXFLAGS += -DUNIT_TEST=1
 CPPUTEST_CXXFLAGS += -Wno-c++14-compat
 CPPUTEST_CXXFLAGS += --std=c++11
 CPPUTEST_CXXFLAGS += -Wno-c++98-compat-pedantic
