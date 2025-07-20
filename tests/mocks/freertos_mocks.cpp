@@ -44,13 +44,13 @@ int xPortInIsrContext(void)
 void vTaskSuspend( TaskHandle_t xTaskToSuspend )
 {
     mock().actualCall("vTaskSuspend")
-        .withPointerParameter("xTaskToSuspend", xTaskToSuspend);
+        .withBoolParameter("xTaskToSuspend", (xTaskToSuspend != nullptr));
 }
 
 void vTaskResume( TaskHandle_t xTaskToResume )
 {
     mock().actualCall("vTaskResume")
-        .withPointerParameter("xTaskToResume", xTaskToResume);
+        .withBoolParameter("xTaskToResume", (xTaskToResume != nullptr)); /* we might or might not need to check this*/
 }
 
 void vTaskDelete( TaskHandle_t xTask )
