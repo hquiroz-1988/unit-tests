@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-07-18 05:41:58</td>
+      <td>2025-07-20 06:02:46</td>
     </tr>
   </table>
 </div>
@@ -40,21 +40,21 @@
     </tr>
     <tr>
       <th scope="row">Lines:</th>
-      <td>11</td>
+      <td>19</td>
       <td>41</td>
-      <td class="coverage-low">26.8%</td>
+      <td class="coverage-low">46.3%</td>
     </tr>
     <tr>
       <th scope="row">Functions:</th>
-      <td>2</td>
+      <td>4</td>
       <td>9</td>
-      <td class="coverage-low">22.2%</td>
+      <td class="coverage-low">44.4%</td>
     </tr>
     <tr>
       <th scope="row">Branches:</th>
-      <td>22</td>
+      <td>34</td>
       <td>148</td>
-      <td class="coverage-low">14.9%</td>
+      <td class="coverage-low">23.0%</td>
     </tr>
   </table>
 </div>
@@ -73,9 +73,9 @@
     <tr><td><a href="#l62">eTaskGetState (line 62)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l21">ulTaskNotifyTake (line 21)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l56">vTaskDelete (line 56)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l50">vTaskResume (line 50)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l44">vTaskSuspend (line 44)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l39">xPortInIsrContext (line 39)</a></td><td>called 5 times</td><td>69.0%</td></tr>
+    <tr><td><a href="#l50">vTaskResume (line 50)</a></td><td>called 1 time</td><td>58.0%</td></tr>
+    <tr><td><a href="#l44">vTaskSuspend (line 44)</a></td><td>called 1 time</td><td>58.0%</td></tr>
+    <tr><td><a href="#l39">xPortInIsrContext (line 39)</a></td><td>called 11 times</td><td>69.0%</td></tr>
     <tr><td><a href="#l28">xQueueGenericSend (line 28)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l69">xTaskCreate (line 69)</a></td><td>called 2 times</td><td>56.0%</td></tr>
     <tr><td><a href="#l16">xTaskGetCurrentTaskHandle (line 16)</a></td><td>not called</td><td>0.0%</td></tr>
@@ -362,7 +362,7 @@
       <td class="lineno"><a id="l39" href="#l39">39</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5</td>
+      <td class="linecount coveredLine">11</td>
       <td class="src coveredLine"><span class="kt">int</span><span class="w"> </span><span class="n">xPortInIsrContext</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -378,20 +378,20 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">5/10</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 11 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 11 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 11 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
-            <div class="takenBranch">&check; Branch 10 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 11 times.</div>
             <div class="notTakenBranch">&cross; Branch 11 not taken.</div>
-            <div class="takenBranch">&check; Branch 13 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 13 taken 11 times.</div>
             <div class="notTakenBranch">&cross; Branch 14 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">5</td>
+      <td class="linecount partialCoveredLine">11</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">mock</span><span class="p">().</span><span class="n">actualCall</span><span class="p">(</span><span class="s">&quot;xPortInIsrContext&quot;</span><span class="p">).</span><span class="n">returnIntValueOrDefault</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -412,8 +412,8 @@
       <td class="lineno"><a id="l44" href="#l44">44</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">vTaskSuspend</span><span class="p">(</span><span class="w"> </span><span class="n">TaskHandle_t</span><span class="w"> </span><span class="n">xTaskToSuspend</span><span class="w"> </span><span class="p">)</span></td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">vTaskSuspend</span><span class="p">(</span><span class="w"> </span><span class="n">TaskHandle_t</span><span class="w"> </span><span class="n">xTaskToSuspend</span><span class="w"> </span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l45" href="#l45">45</a></td>
@@ -425,23 +425,45 @@
     <tr class="source-line">
       <td class="lineno"><a id="l46" href="#l46">46</a></td>
       <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">4/8</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 1 taken 1 times.</div>
+            <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
+            <div class="takenBranch">&check; Branch 4 taken 1 times.</div>
+            <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
+            <div class="takenBranch">&check; Branch 7 taken 1 times.</div>
+            <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
+            <div class="takenBranch">&check; Branch 10 taken 1 times.</div>
+            <div class="notTakenBranch">&cross; Branch 11 not taken.</div>
+          </div>
+        </details>
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="n">mock</span><span class="p">().</span><span class="n">actualCall</span><span class="p">(</span><span class="s">&quot;vTaskSuspend&quot;</span><span class="p">)</span></td>
+      <td class="linecount partialCoveredLine">2</td>
+      <td class="src partialCoveredLine"><span class="w">    </span><span class="n">mock</span><span class="p">().</span><span class="n">actualCall</span><span class="p">(</span><span class="s">&quot;vTaskSuspend&quot;</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l47" href="#l47">47</a></td>
       <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">2/4</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 1 taken 1 times.</div>
+            <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
+            <div class="takenBranch">&check; Branch 4 taken 1 times.</div>
+            <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
+          </div>
+        </details>
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="p">.</span><span class="n">withPointerParameter</span><span class="p">(</span><span class="s">&quot;xTaskToSuspend&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">xTaskToSuspend</span><span class="p">);</span></td>
+      <td class="linecount partialCoveredLine">1</td>
+      <td class="src partialCoveredLine"><span class="w">        </span><span class="p">.</span><span class="n">withBoolParameter</span><span class="p">(</span><span class="s">&quot;xTaskToSuspend&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">xTaskToSuspend</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l48" href="#l48">48</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="p">}</span></td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l49" href="#l49">49</a></td>
@@ -454,8 +476,8 @@
       <td class="lineno"><a id="l50" href="#l50">50</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">vTaskResume</span><span class="p">(</span><span class="w"> </span><span class="n">TaskHandle_t</span><span class="w"> </span><span class="n">xTaskToResume</span><span class="w"> </span><span class="p">)</span></td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">vTaskResume</span><span class="p">(</span><span class="w"> </span><span class="n">TaskHandle_t</span><span class="w"> </span><span class="n">xTaskToResume</span><span class="w"> </span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l51" href="#l51">51</a></td>
@@ -467,23 +489,45 @@
     <tr class="source-line">
       <td class="lineno"><a id="l52" href="#l52">52</a></td>
       <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">4/8</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 1 taken 1 times.</div>
+            <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
+            <div class="takenBranch">&check; Branch 4 taken 1 times.</div>
+            <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
+            <div class="takenBranch">&check; Branch 7 taken 1 times.</div>
+            <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
+            <div class="takenBranch">&check; Branch 10 taken 1 times.</div>
+            <div class="notTakenBranch">&cross; Branch 11 not taken.</div>
+          </div>
+        </details>
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="n">mock</span><span class="p">().</span><span class="n">actualCall</span><span class="p">(</span><span class="s">&quot;vTaskResume&quot;</span><span class="p">)</span></td>
+      <td class="linecount partialCoveredLine">2</td>
+      <td class="src partialCoveredLine"><span class="w">    </span><span class="n">mock</span><span class="p">().</span><span class="n">actualCall</span><span class="p">(</span><span class="s">&quot;vTaskResume&quot;</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l53" href="#l53">53</a></td>
       <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">2/4</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 1 taken 1 times.</div>
+            <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
+            <div class="takenBranch">&check; Branch 4 taken 1 times.</div>
+            <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
+          </div>
+        </details>
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="p">.</span><span class="n">withPointerParameter</span><span class="p">(</span><span class="s">&quot;xTaskToResume&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">xTaskToResume</span><span class="p">);</span></td>
+      <td class="linecount partialCoveredLine">1</td>
+      <td class="src partialCoveredLine"><span class="w">        </span><span class="p">.</span><span class="n">withBoolParameter</span><span class="p">(</span><span class="s">&quot;xTaskToResume&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">xTaskToResume</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">));</span><span class="w"> </span><span class="cm">/* we might or might not need to check this*/</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l54" href="#l54">54</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="p">}</span></td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l55" href="#l55">55</a></td>
