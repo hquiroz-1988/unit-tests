@@ -16,11 +16,13 @@ extern "C"
 TEST_GROUP(PowerMonitor_tests) 
 {
     PowerMonitor * powerMonitor = nullptr;
+    Telemetry * telem = nullptr;
     
     void setup()
     {
+        telem = new Telemetry();
         // !TODO: create power monitor instance with appropriate parameters
-        powerMonitor = new PowerMonitor();
+        powerMonitor = new PowerMonitor(*telem);
     }
 
     void teardown()
@@ -30,10 +32,14 @@ TEST_GROUP(PowerMonitor_tests)
         mock().expectOneCall("vTaskDelete");
 
         delete powerMonitor;
+        delete telem;
+
 
         powerMonitor = nullptr;
+        telem = nullptr;
 
         CHECK(powerMonitor == nullptr);
+        CHECK(telem == nullptr);
 
         mock().clear();
     }
