@@ -24,9 +24,10 @@ endif
 # SRC_DIRS specifies directories containing
 # production code C and CPP files.
 #
-# SRC_FILES += ../solar_meter/main/ads1115.cpp
-SRC_DIRS += ../solar_meter/Source/Application	
-SRC_DIRS += ../solar_meter/Source/Middleware	
+SRC_FILES += ../solar_meter/Source/Application/power_monitor.cpp
+SRC_FILES += ../solar_meter/Source/Middleware/Task.cpp
+# SRC_DIRS += ../solar_meter/Source/Application	
+# SRC_DIRS += ../solar_meter/Source/Middleware	
 
 # --- TEST_SRC_FILES and TEST_SRC_DIRS ---
 # Test files are always included in the build.
