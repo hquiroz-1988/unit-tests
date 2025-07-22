@@ -11,9 +11,9 @@ void BusVoltage::init(void)
     mock().actualCall("initBusVoltage");
 }
 
-retVal_t BusVoltage::getFilteredVoltage(float * value)
+Status_t BusVoltage::getFilteredVoltage(float * value)
 {
-    return static_cast<retVal_t>(mock().actualCall("getFilteredVoltage")
+    return static_cast<Status_t>(mock().actualCall("getFilteredVoltage")
           .withOutputParameter("value", value)
-          .returnIntValueOrDefault(ERR_FAIL));
+          .returnIntValueOrDefault(STATUS_UNKNOWN));
 }
