@@ -11,9 +11,9 @@ void BusCurrent::init(void)
     mock().actualCall("initBusCurrent");
 }
 
-retVal_t BusCurrent::getFilteredCurrent(float * value)
+Status_t BusCurrent::getFilteredCurrent(float * value)
 {
-    return static_cast<retVal_t>(mock().actualCall("getFilteredCurrent")
+    return static_cast<Status_t>(mock().actualCall("getFilteredCurrent")
           .withOutputParameter("value", value)
-          .returnIntValueOrDefault(ERR_FAIL));
+          .returnIntValueOrDefault(STATUS_OKAY));
 }

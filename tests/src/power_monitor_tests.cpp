@@ -59,8 +59,8 @@ TEST(PowerMonitor_tests, initTask)
         .ignoreOtherParameters()
         /* but well return true for testing purposes    */
         .andReturnValue(true);
-    retVal_t ret = powerMonitor->initTask();
-    CHECK_EQUAL(ERR_FAIL, ret);
+    Status_t ret = powerMonitor->initTask();
+    CHECK_EQUAL(STATUS_REINIT_ERROR, ret);
     
 
     /*  Test with xport returning in ISR    */
@@ -72,7 +72,7 @@ TEST(PowerMonitor_tests, initTask)
     mock().expectOneCall("xPortInIsrContext").andReturnValue(1);
     ret = powerMonitor->initTask();
     /* this should return fail but not call any other functions  */
-    CHECK_EQUAL(ERR_IN_ISR, ret);
+    CHECK_EQUAL(STATUS_IN_ISR_ERROR, ret);
     
     
     /*  expect call to check pointer valid */
@@ -96,7 +96,7 @@ TEST(PowerMonitor_tests, initTask)
     
     ret = powerMonitor->initTask();
     
-    CHECK_EQUAL(ERR_OS_FAIL, ret);
+    CHECK_EQUAL(STATUS_OS_ERROR, ret);
 
 
     /*  expect call to check pointer valid */
@@ -120,7 +120,7 @@ TEST(PowerMonitor_tests, initTask)
     
     ret = powerMonitor->initTask();
     
-    CHECK_EQUAL(ERR_NONE, ret);
+    CHECK_EQUAL(STATUS_OKAY, ret);
 }
 
 TEST(PowerMonitor_tests, runInCurrent)
@@ -141,9 +141,9 @@ TEST(PowerMonitor_tests, SuspendAndResume)
         .withBoolParameter("ptr", false)
         /* we want this to return false to simulate error */
         .andReturnValue(false);
-    retVal_t ret = powerMonitor->suspend();
+    Status_t ret = powerMonitor->suspend();
     /* if task handle uninitialized this should return null pointer  */
-    CHECK_EQUAL(ERR_NULL_POINTER, ret);
+    CHECK_EQUAL(STATUS_NULL_POINTER, ret);
 
 
     /*  Make a call to task resume with an unitialized taskhandle  */
@@ -155,7 +155,7 @@ TEST(PowerMonitor_tests, SuspendAndResume)
     /*  Test with null task handle    */
     ret = powerMonitor->resume();
     /* this should return null pointer  */
-    CHECK_EQUAL(ERR_NULL_POINTER, ret);
+    CHECK_EQUAL(STATUS_NULL_POINTER, ret);
 
     /*  Test with xport returning in ISR    */
     mock().expectOneCall("CHECK_POINTER_VALID")
@@ -166,7 +166,7 @@ TEST(PowerMonitor_tests, SuspendAndResume)
     mock().expectOneCall("xPortInIsrContext").andReturnValue(1);
     ret = powerMonitor->suspend();
     /* this should return fail but not call any other functions  */
-    CHECK_EQUAL(ERR_IN_ISR, ret);
+    CHECK_EQUAL(STATUS_IN_ISR_ERROR, ret);
 
     /*  Test with xport returning not in ISR    */
     mock().expectOneCall("CHECK_POINTER_VALID")
@@ -180,7 +180,7 @@ TEST(PowerMonitor_tests, SuspendAndResume)
         /* we dont care about the value of xTaskToSuspend since we are mocking it */    
         .ignoreOtherParameters();
     ret = powerMonitor->suspend();
-    CHECK_EQUAL(ERR_NONE, ret);
+    CHECK_EQUAL(STATUS_OKAY, ret);
 
     /*  Test with xport returning in ISR    */
     mock().expectOneCall("CHECK_POINTER_VALID")
@@ -191,7 +191,7 @@ TEST(PowerMonitor_tests, SuspendAndResume)
     mock().expectOneCall("xPortInIsrContext").andReturnValue(1);
     ret = powerMonitor->resume();
     /* this should return in isr error */
-    CHECK_EQUAL(ERR_IN_ISR, ret);
+    CHECK_EQUAL(STATUS_IN_ISR_ERROR, ret);
 
     /*  Test with xport returning not in ISR    */
     mock().expectOneCall("CHECK_POINTER_VALID")
@@ -205,5 +205,5 @@ TEST(PowerMonitor_tests, SuspendAndResume)
         /* ignore value into vtask resume since we are mocking handle above */
         .ignoreOtherParameters();
     ret = powerMonitor->resume();
-    CHECK_EQUAL(ERR_NONE, ret);
+    CHECK_EQUAL(STATUS_OKAY, ret);
 }
