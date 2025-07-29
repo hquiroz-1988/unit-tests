@@ -24,8 +24,10 @@ endif
 # SRC_DIRS specifies directories containing
 # production code C and CPP files.
 #
-# SRC_FILES += ../solar_meter/main/ads1115.cpp
-SRC_DIRS += ../solar_meter/main
+SRC_FILES += ../solar_meter/Source/Application/power_monitor.cpp
+SRC_FILES += ../solar_meter/Source/Middleware/Task.cpp
+# SRC_DIRS += ../solar_meter/Source/Application	
+# SRC_DIRS += ../solar_meter/Source/Middleware	
 
 # --- TEST_SRC_FILES and TEST_SRC_DIRS ---
 # Test files are always included in the build.
@@ -38,7 +40,8 @@ SRC_DIRS += ../solar_meter/main
 
 # Test Source Files
 TEST_SRC_FILES += tests/AllTests.cpp
-TEST_SRC_FILES += tests/ads1115_tests.cpp
+# TEST_SRC_FILES += tests/src/ads1115_tests.cpp # TODO: uncomment when ads1115 tests are ready
+TEST_SRC_FILES += tests/src/power_monitor_tests.cpp
 
 # Test Source Directories
 # TEST_SRC_DIRS += tests
@@ -70,15 +73,20 @@ INCLUDE_DIRS += example-fff
 INCLUDE_DIRS += tests/exploding-fakes
 INCLUDE_DIRS += tests/fff
 INCLUDE_DIRS += tests/includes
-# Solar Meter Includes
-INCLUDE_DIRS += ../solar_meter/main
 
+# Solar Meter Source Includes
+INCLUDE_DIRS += ../solar_meter/Source/Devices/includes
+INCLUDE_DIRS += ../solar_meter/Source/Peripherals/includes
+INCLUDE_DIRS += ../solar_meter/Source/Common
+INCLUDE_DIRS += ../solar_meter/Source/Application/includes
+INCLUDE_DIRS += ../solar_meter/Source/Middleware/includes
+
+# ESP8266_RTOS_SDK includes
 INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/freertos/port/esp8266/include
 INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/freertos/port/esp8266/include/freertos
 INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/freertos/include
 INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/freertos/include/freertos
 INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/freertos/include/freertos/private
-# INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/wear_levelling/test_wl_host/sdkconfig
 INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/esp8266/include
 INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/esp_common/include
 INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/heap/include
@@ -146,6 +154,8 @@ CPPUTEST_CFLAGS += -pedantic
 CPPUTEST_CFLAGS += -Wno-missing-prototypes
 CPPUTEST_CFLAGS += -Wno-strict-prototypes
 CPPUTEST_CFLAGS += -D__ESP_FILE__=__FILE__
+CPPUTEST_CFLAGS += -DUNIT_TEST=1
+CPPUTEST_CXXFLAGS += -DUNIT_TEST=1
 CPPUTEST_CXXFLAGS += -Wno-c++14-compat
 CPPUTEST_CXXFLAGS += --std=c++11
 CPPUTEST_CXXFLAGS += -Wno-c++98-compat-pedantic
