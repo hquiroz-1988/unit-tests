@@ -1,19 +1,19 @@
 #include "CppUTestExt/MockSupport.h"
-#include "telemetry.hpp"
+#include "networking.hpp"
 
 extern "C"
 {
 
 }
 
-void Telemetry::init(void)
+void NetworkingModule::init(void)
 {
-    mock().actualCall("initTelemetry");
+    mock().actualCall("initNetworking");
 }
 
-Status_t Telemetry::sendPacket(telemetry_packet_t * packet)
+Status_t NetworkingModule::queueNetworkingMessage(NetworkingMessage_t * message)
 {
-    return static_cast<Status_t>(mock().actualCall("sendPacket")
-          .withParameter("packet", packet)
+    return static_cast<Status_t>(mock().actualCall("queueNetworkingMessage")
+          .withBoolParameter("message", message != nullptr)
           .returnIntValueOrDefault(STATUS_UNKNOWN));
 }

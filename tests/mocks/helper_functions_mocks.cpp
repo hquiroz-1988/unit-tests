@@ -14,7 +14,7 @@ bool FOREVER(void)
 {
     return mock()
             .actualCall("FOREVER")
-            .returnBoolValueOrDefault(true);
+            .returnBoolValueOrDefault(false);
 }
 
 bool CHECK_POINTER_VALID(void *ptr)

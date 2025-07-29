@@ -62,9 +62,11 @@ void vTaskDelete( TaskHandle_t xTask )
 eTaskState eTaskGetState( TaskHandle_t xTask )
 {
     return static_cast<eTaskState>(mock().actualCall("eTaskGetState")
+        .withBoolParameter("xTaskNotNull", (xTask!=nullptr) )
         .withPointerParameter("xTask", xTask)
         .returnUnsignedIntValueOrDefault(eDeleted));
 }
+
 
 BaseType_t xTaskCreate(	TaskFunction_t pxTaskCode,
 							const char * const pcName,		/*lint !e971 Unqualified char types are allowed for strings and single characters only. */
@@ -81,4 +83,27 @@ BaseType_t xTaskCreate(	TaskFunction_t pxTaskCode,
         .withParameter("uxPriority", uxPriority)
         .withOutputParameter("pxCreatedTask", pxCreatedTask)
         .returnIntValueOrDefault(pdPASS);
+}
+
+TickType_t xTaskGetTickCount( void )
+{
+    return mock().actualCall("xTaskGetTickCount").returnUnsignedIntValueOrDefault(0);
+}
+
+void vTaskDelay( const TickType_t xTicksToDelay )
+{
+    mock().actualCall("vTaskDelay")
+        .withParameter("xTicksToDelay", xTicksToDelay);
+    // In a real implementation, this would block the task for the specified number of ticks.
+    // Here we just simulate the call.
+}
+
+BaseType_t xTaskNotifyWait( uint32_t ulBitsToClearOnEntry, uint32_t ulBitsToClearOnExit, uint32_t *pulNotificationValue, TickType_t xTicksToWait )
+{
+    return mock().actualCall("xTaskNotifyWait")
+        .withParameter("ulBitsToClearOnEntry", ulBitsToClearOnEntry)
+        .withParameter("ulBitsToClearOnExit", ulBitsToClearOnExit)
+        .withOutputParameter("pulNotificationValue", pulNotificationValue)
+        .withParameter("xTicksToWait", xTicksToWait)
+        .returnIntValueOrDefault(pdTRUE);
 }
