@@ -54,10 +54,10 @@ TEST(ADS1115_tests, GetConfiguration)
 
     // FAIL("This test is not implemented yet");
     /* first calls tests null pointer    */
-    retVal_t ret = ads1115->getConfiguration(configPtr);
+    Status_t ret = ads1115->getConfiguration(configPtr);
 
     /* check for null pointer error */
-    CHECK_EQUAL(ERR_NULL_POINTER, ret);
+    CHECK_EQUAL(STATUS_NULL_POINTER, ret);
 
 
     /* now we can test with a valid config pointer */
@@ -77,14 +77,14 @@ TEST(ADS1115_tests, GetConfiguration)
     //       config.opStatus == ADS1115_OPERATION_STATUS_NO_CONVERSION_IN_PROGRESS);
 
     // /* make sure we receive a no errros */
-    // CHECK_EQUAL(ERR_NONE, ret);
+    // CHECK_EQUAL(STATUS_OKAY, ret);
 }
 
 TEST(ADS1115_tests, GetReading)
 {
     // ads1115ConversionRegister_t reg;
-    // retVal_t ret = ads1115->getLatestReading(&reg);
-    // CHECK_EQUAL(ERR_NONE, ret);
+    // Status_t ret = ads1115->getLatestReading(&reg);
+    // CHECK_EQUAL(STATUS_OKAY, ret);
     // // Assuming the reading is valid, we can check if the value is within expected range
     // CHECK(reg.value >= 0 && reg.value <= 32767); // Example range for a 16-bit signed ADC
 }
@@ -102,6 +102,6 @@ TEST(ADS1115_tests, SetConfiguration)
     // config.compLatch = 0; // Example comparator latch
     // config.compQueue = 0; // Example comparator queue
 
-    // retVal_t ret = ads1115->setConfiguration(&config);
-    // CHECK_EQUAL(ERR_NONE, ret);
+    // Status_t ret = ads1115->setConfiguration(&config);
+    // CHECK_EQUAL(STATUS_OKAY, ret);
 }

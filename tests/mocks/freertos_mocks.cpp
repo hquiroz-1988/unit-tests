@@ -34,3 +34,76 @@ BaseType_t xQueueGenericSend( QueueHandle_t xQueue, const void * const pvItemToQ
         .withParameter("xCopyPosition", xCopyPosition)
         .returnIntValueOrDefault(0);
 }   
+
+
+int xPortInIsrContext(void)
+{
+    return mock().actualCall("xPortInIsrContext").returnIntValueOrDefault(0);
+}
+
+void vTaskSuspend( TaskHandle_t xTaskToSuspend )
+{
+    mock().actualCall("vTaskSuspend")
+        .withBoolParameter("xTaskToSuspend", (xTaskToSuspend != nullptr));
+}
+
+void vTaskResume( TaskHandle_t xTaskToResume )
+{
+    mock().actualCall("vTaskResume")
+        .withBoolParameter("xTaskToResume", (xTaskToResume != nullptr)); /* we might or might not need to check this*/
+}
+
+void vTaskDelete( TaskHandle_t xTask )
+{
+    mock().actualCall("vTaskDelete")
+        .withPointerParameter("xTask", xTask);
+}
+
+eTaskState eTaskGetState( TaskHandle_t xTask )
+{
+    return static_cast<eTaskState>(mock().actualCall("eTaskGetState")
+        .withBoolParameter("xTaskNotNull", (xTask!=nullptr) )
+        .withPointerParameter("xTask", xTask)
+        .returnUnsignedIntValueOrDefault(eDeleted));
+}
+
+
+BaseType_t xTaskCreate(	TaskFunction_t pxTaskCode,
+							const char * const pcName,		/*lint !e971 Unqualified char types are allowed for strings and single characters only. */
+							const configSTACK_DEPTH_TYPE usStackDepth,
+							void * const pvParameters,
+							UBaseType_t uxPriority,
+							TaskHandle_t * const pxCreatedTask )
+{
+    return mock().actualCall("xTaskCreate")
+        .withBoolParameter("pxTaskCode", (pxTaskCode != nullptr))
+        .withStringParameter("pcName", pcName)
+        .withBoolParameter("usStackDepth", (usStackDepth >= configMINIMAL_STACK_SIZE))
+        .withPointerParameter("pvParameters", pvParameters)
+        .withParameter("uxPriority", uxPriority)
+        .withOutputParameter("pxCreatedTask", pxCreatedTask)
+        .returnIntValueOrDefault(pdPASS);
+}
+
+TickType_t xTaskGetTickCount( void )
+{
+    return mock().actualCall("xTaskGetTickCount").returnUnsignedIntValueOrDefault(0);
+}
+
+void vTaskDelay( const TickType_t xTicksToDelay )
+{
+    mock().actualCall("vTaskDelay")
+        .withParameter("xTicksToDelay", xTicksToDelay);
+    // In a real implementation, this would block the task for the specified number of ticks.
+    // Here we just simulate the call.
+}
+
+BaseType_t xTaskNotifyWait( uint32_t ulBitsToClearOnEntry, uint32_t ulBitsToClearOnExit, uint32_t *pulNotificationValue, TickType_t xTicksToWait )
+{
+    return mock().actualCall("xTaskNotifyWait")
+        .withParameter("ulBitsToClearOnEntry", ulBitsToClearOnEntry)
+        .withParameter("ulBitsToClearOnExit", ulBitsToClearOnExit)
+        .withOutputParameter("pulNotificationValue", pulNotificationValue)
+        .withParameter("xTicksToWait", xTicksToWait)
+        .returnIntValueOrDefault(pdTRUE);
+}
