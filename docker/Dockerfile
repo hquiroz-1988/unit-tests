@@ -12,7 +12,7 @@ RUN apt-get install -y python3 && \
     apt-get install -y python3-pip && \
     pip install gcovr
 
-RUN gcovr --html-details coverage.html -r ..
+# RUN gcovr --html-details coverage.html -r ..
 
 RUN autoreconf . -i && \    
     ./configure --enable-coverage CFLAGS="-O0" CXXFLAGS="-O0" && \
@@ -34,4 +34,10 @@ RUN echo '#!/bin/bash' >>/usr/bin/legacy-build && \
         chmod +x /usr/bin/legacy-build
 RUN echo 'echo run "make -C <test-makefile-dir>/" or "legacy-build"' >> ~/.bashrc
 
-WORKDIR /home/src
+WORKDIR /home
+
+# RUN echo "current location: ${PWD}"
+
+ENTRYPOINT [ "/home/unit_test/docker/entrypoint.sh" ]
+
+CMD [ "/bin/bash" ]
