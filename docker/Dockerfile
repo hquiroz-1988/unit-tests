@@ -22,17 +22,17 @@ ENV CPPUTEST_HOME=/opt/cpputest \
     PROJECT_ROOT=/home \
     ESP_SDK_HOME=/home/ESP8266_RTOS_SDK
 
-# Install leagcy-build
-WORKDIR /opt/legacy-build
-RUN git clone --depth 1 https://github.com/jwgrenning/legacy-build.git .
-RUN git config pull.ff only
-RUN git pull
-RUN git submodule update --init --recursive
-ENV LEGACY_BUILD="/opt/legacy-build"
-RUN echo '#!/bin/bash' >>/usr/bin/legacy-build && \
-    echo '/opt/legacy-build/legacy-build.sh $1 $2 $3' >>/usr/bin/legacy-build && \
-        chmod +x /usr/bin/legacy-build
-RUN echo 'echo run "make -C <test-makefile-dir>/" or "legacy-build"' >> ~/.bashrc
+# # Install leagcy-build
+# WORKDIR /opt/legacy-build
+# RUN git clone --depth 1 https://github.com/jwgrenning/legacy-build.git .
+# RUN git config pull.ff only
+# RUN git pull
+# RUN git submodule update --init --recursive
+# ENV LEGACY_BUILD="/opt/legacy-build"
+# RUN echo '#!/bin/bash' >>/usr/bin/legacy-build && \
+#     echo '/opt/legacy-build/legacy-build.sh $1 $2 $3' >>/usr/bin/legacy-build && \
+#         chmod +x /usr/bin/legacy-build
+# RUN echo 'echo run "make -C <test-makefile-dir>/" or "legacy-build"' >> ~/.bashrc
 
 WORKDIR /home
 
