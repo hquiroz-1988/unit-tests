@@ -11,6 +11,6 @@ sudo docker run \
   --name cpputest-runner \
   --volume "${HOST_WORKDIR}":"${WORKDIR}" \
   --workdir "${WORKDIR}" \
-  $TAG \
+  -it $TAG \
   $COMMAND
 
