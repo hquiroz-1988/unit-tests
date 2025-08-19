@@ -24,10 +24,16 @@ endif
 # SRC_DIRS specifies directories containing
 # production code C and CPP files.
 #
+ifeq ($(TEST_POWER_MONITOR), true)
 SRC_FILES += ../solar_meter/components/application/power_monitor.cpp
 SRC_FILES += ../solar_meter/components/common/Task.cpp
-# SRC_DIRS += ../solar_meter/Source/Application	
-# SRC_DIRS += ../solar_meter/Source/Middleware	
+endif
+
+ifeq ($(TEST_ADS1115), true)
+SRC_FILES += ../solar_meter/components/device_drivers/ads1115.cpp
+endif
+
+# SRC_DIRS += 
 
 # --- TEST_SRC_FILES and TEST_SRC_DIRS ---
 # Test files are always included in the build.
@@ -40,14 +46,17 @@ SRC_FILES += ../solar_meter/components/common/Task.cpp
 
 # Test Source Files
 TEST_SRC_FILES += tests/AllTests.cpp
-# TEST_SRC_FILES += tests/src/ads1115_tests.cpp # TODO: uncomment when ads1115 tests are ready
+
+ifeq ($(TEST_POWER_MONITOR), true)
 TEST_SRC_FILES += tests/src/power_monitor_tests.cpp
+endif
+
+ifeq ($(TEST_ADS1115), true)
+TEST_SRC_FILES += tests/src/ads1115_tests.cpp
+endif
 
 # Test Source Directories
 # TEST_SRC_DIRS += tests
-
-#	tests/example-fff \
-#	tests/fff \
 
 # --- MOCKS_SRC_DIRS ---
 # MOCKS_SRC_DIRS specifies a directories where you can put your
