@@ -29,6 +29,10 @@ SRC_FILES += ../solar_meter/components/application/power_monitor.cpp
 SRC_FILES += ../solar_meter/components/common/Task.cpp
 endif
 
+ifeq ($(TEST_BUS_VOLTAGE), true)
+SRC_FILES += ../solar_meter/components/application/bus_voltage.cpp
+endif
+
 ifeq ($(TEST_ADS1115), true)
 SRC_FILES += ../solar_meter/components/device_drivers/ads1115.cpp
 endif
@@ -51,6 +55,10 @@ ifeq ($(TEST_POWER_MONITOR), true)
 TEST_SRC_FILES += tests/src/power_monitor_tests.cpp
 endif
 
+ifeq ($(TEST_BUS_VOLTAGE), true)
+TEST_SRC_FILES += tests/src/bus_voltage_tests.cpp
+endif
+
 ifeq ($(TEST_ADS1115), true)
 TEST_SRC_FILES += tests/src/ads1115_tests.cpp
 endif
@@ -62,8 +70,19 @@ endif
 # MOCKS_SRC_DIRS specifies a directories where you can put your
 # mocks, stubs and fakes.  You can also just put them
 # in TEST_SRC_DIRS
-MOCKS_SRC_DIRS += tests/mocks
+MOCKS_SRC_FILES += tests/mocks/esp_log_mocks.cpp
+MOCKS_SRC_FILES += tests/mocks/freertos_mocks.cpp
+MOCKS_SRC_FILES += tests/mocks/helper_functions_mocks.cpp
+MOCKS_SRC_FILES += tests/mocks/i2c_task_mocks.cpp
+MOCKS_SRC_FILES += tests/mocks/telemetry_mocks.cpp
+ifneq ($(TEST_BUS_VOLTAGE), true)
+MOCKS_SRC_FILES += tests/mocks/bus_voltage_mocks.cpp
+endif
+ifneq ($(TEST_ADS1115), true)
+MOCKS_SRC_FILES += tests/mocks/ads1115_mocks.cpp
+endif
 
+# MOCKS_SRC_DIRS += tests/mocks
 
 # Turn on CppUMock
 CPPUTEST_USE_EXTENSIONS = Y
@@ -179,5 +198,7 @@ CPPUTEST_EXE_FLAGS += -c
 #LD_LIBRARIES += -lm
 
 # Look at $(CPPUTEST_HOME)/build/MakefileWorker.mk for more controls
+# echo $(MOCKS_SRC_FILES)
+$(info MOCKS_SRC_FILES: $(MOCKS_SRC_FILES))
 
 include $(CPPUTEST_HOME)/build/MakefileWorker.mk
