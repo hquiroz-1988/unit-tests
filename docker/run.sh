@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TAG=jwgrenning/cpputest-runner
+TAG=hq/cpputest-runner
 
 HOST_WORKDIR=${PWD}
 WORKDIR=/home
