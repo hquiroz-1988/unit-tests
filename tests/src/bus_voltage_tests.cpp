@@ -54,7 +54,15 @@ TEST_GROUP(BusVoltage_tests)
 
 TEST(BusVoltage_tests, Constructor)
 {
+    CHECK(busVoltageModule != NULL);
+}
 
+TEST(BusVoltage_tests, Destructor)
+{
+    delete busVoltageModule;
+    busVoltageModule = nullptr;
+
+    CHECK(busVoltageModule == NULL);
 }
 
 
