@@ -50,8 +50,6 @@ TEST_GROUP(BusVoltage_tests)
     }
 };
 
-
-
 TEST(BusVoltage_tests, Constructor)
 {
     CHECK(busVoltageModule != NULL);
@@ -65,6 +63,11 @@ TEST(BusVoltage_tests, Destructor)
     CHECK(busVoltageModule == NULL);
 }
 
+TEST(BusVoltage_tests, init)
+{
+    Status_t status = busVoltageModule->init();
+    CHECK_EQUAL(STATUS_OKAY, status);
+}
 
 // TEST(PowerMonitor_tests, DestructorInISR)
 // {
