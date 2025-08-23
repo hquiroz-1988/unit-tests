@@ -67,11 +67,11 @@ ADS1115::~ADS1115()
             .returnIntValueOrDefault(STATUS_OKAY));
 }
 
-Status_t ADS1115::readADC_SingleEnded(ADS1115_Conversion_t & convObj)
+Status_t ADS1115::readADC_SingleEnded(ADS1115Channel & channel)
 {
     return static_cast<Status_t>(mock()
             .actualCall("readADC_SingleEnded")
-            .withParameter("conv", &convObj)
+            .withParameter("channel", &channel)
             .returnIntValueOrDefault(STATUS_OKAY));
 }
 
