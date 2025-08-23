@@ -16,6 +16,7 @@ extern "C"
 TEST_GROUP(PowerMonitor_tests) 
 {
     PowerMonitor * powerMonitor = nullptr;
+    ADS1115 * ads1115 = nullptr;
     NetworkingModule * networkingModule = nullptr;
     BusCurrent * busCurrentModule = nullptr;
     BusVoltage * busVoltageModule = nullptr;
@@ -24,7 +25,8 @@ TEST_GROUP(PowerMonitor_tests)
     void setup()
     {
         networkingModule = new NetworkingModule();
-        busVoltageModule = new BusVoltage();
+        ads1115 = new ADS1115();
+        busVoltageModule = new BusVoltage(powerMonitor, *ads1115);
         busCurrentModule = new BusCurrent();
         powerMonitor = new PowerMonitor(*networkingModule, *busVoltageModule, *busCurrentModule);
     }
