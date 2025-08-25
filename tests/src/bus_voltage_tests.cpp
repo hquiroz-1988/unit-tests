@@ -3,6 +3,7 @@
 #include "CppUTestExt/MockSupport.h"
 
 #include "bus_voltage.hpp"
+#include "bus_current.hpp"
 
 extern "C"
 {
@@ -13,26 +14,79 @@ extern "C"
 
 TEST_GROUP(BusVoltage_tests) 
 {
+    Gpio * gpioModule = nullptr;
     BusVoltage * busVoltageModule = nullptr;
     ADS1115 * ads1115Module = nullptr;
+    INA219 * ina219Module = nullptr;
+    PowerMonitor * powerMonitorModule = nullptr;
+    NetworkingModule * networkingModule = nullptr;
+    BusCurrent * busCurrentModule = nullptr;
+
+
     char logBuffer[256];
 
     void setup()
     {
-        ads1115Module = new ADS1115();
+        /* setup expectations for following constructors */
+        mock().expectOneCall("Gpio").ignoreOtherParameters();
+        mock().expectOneCall("InterruptBase").ignoreOtherParameters();
+        mock().expectOneCall("I2CDevice").ignoreOtherParameters();
+        mock().expectOneCall("ADS1115").ignoreOtherParameters();
+        mock().expectOneCall("ADS1115Channel").ignoreOtherParameters();
+        mock().expectOneCall("INA219").ignoreOtherParameters();
+        mock().expectOneCall("BusCurrent").ignoreOtherParameters();
+        mock().expectOneCall("NetworkingModule").ignoreOtherParameters();
+        mock().expectOneCall("Task").ignoreOtherParameters();
+        mock().expectOneCall("PowerMonitor").ignoreOtherParameters();
+
+        gpioModule = new Gpio(GpioPin::GPIO_PIN_NONE);
+        ads1115Module = new ADS1115(*gpioModule);
         busVoltageModule = new BusVoltage(*ads1115Module);
+        ina219Module = new INA219();
+        busCurrentModule = new BusCurrent(*ina219Module, powerMonitorModule);
+        networkingModule = new NetworkingModule();
+        powerMonitorModule = new PowerMonitor(*networkingModule, *busVoltageModule, *busCurrentModule);
     }
 
     void teardown()
     {
+        /* teardown expectations */
+        mock().expectOneCall("~PowerMonitor");
+        mock().expectOneCall("~Task");
+        mock().expectOneCall("~NetworkingModule");
+        mock().expectOneCall("~ADS1115Channel");
+        mock().expectOneCall("~ADS1115");
+        mock().expectOneCall("~I2CDevice");
+        mock().expectOneCall("~InterruptBase");
+        mock().expectOneCall("~BusCurrent");
+        mock().expectOneCall("~INA219");
+        mock().expectOneCall("~Gpio");
+
+        delete powerMonitorModule;
+        delete networkingModule;
         delete busVoltageModule;
         delete ads1115Module;
+        delete busCurrentModule;
+        delete ina219Module;
+        delete gpioModule;
 
+
+        /* address dangling pointers */
+        powerMonitorModule = nullptr;
+        networkingModule = nullptr;
         busVoltageModule = nullptr;
         ads1115Module = nullptr;
+        busCurrentModule = nullptr;
+        ina219Module = nullptr;
+        gpioModule = nullptr;
 
+        CHECK(powerMonitorModule == nullptr);
+        CHECK(networkingModule == nullptr);
         CHECK(busVoltageModule == nullptr);
         CHECK(ads1115Module == nullptr);
+        CHECK(busCurrentModule == nullptr);
+        CHECK(ina219Module == nullptr);
+        CHECK(gpioModule == nullptr);
 
         mock().checkExpectations();
         mock().clear();
@@ -57,554 +111,138 @@ TEST(BusVoltage_tests, Constructor)
 
 TEST(BusVoltage_tests, Destructor)
 {
+
+}
+
+TEST(BusVoltage_tests, Initialize)
+{
+
+    /* test hal error from configure path */
+    mock().expectOneCall("ADS1115::configure")
+        .withIntParameter("configObj.opStatus", static_cast<int>(ADS1115_OperationalStatus_t::Write_No_Effect))
+        .withIntParameter("configObj.mux", static_cast<int>(ADS1115Mux_t::AIN0_GND))
+        .withIntParameter("configObj.pga", static_cast<int>(ADS1115PGA_t::FSR_2_048V))
+        .withIntParameter("configObj.mode", static_cast<int>(ADS1115Mode_t::SingleShot))
+        .withIntParameter("configObj.dataRate", static_cast<int>(ADS1115DataRate_t::SPS_860))
+        .withIntParameter("configObj.compMode", static_cast<int>(ADS1115CompMode_t::Window))
+        .withIntParameter("configObj.compPolarity", static_cast<int>(ADS1115CompPolarity_t::ActiveLow))
+        .withIntParameter("configObj.compLatch", static_cast<int>(ADS1115CompLatch_t::Latching))
+        .withIntParameter("configObj.compQueue", static_cast<int>(ADS1115CompQueue_t::AssertAfterFourConversions))
+        .andReturnValue(STATUS_HAL_ERROR);
+    Status_t status = busVoltageModule->initialize(powerMonitorModule);
+    CHECK_EQUAL(STATUS_HAL_ERROR, status);
+
+    /* test low threshold out of bounds */
+    mock().expectOneCall("ADS1115::configure")
+        .withIntParameter("configObj.opStatus", static_cast<int>(ADS1115_OperationalStatus_t::Write_No_Effect))
+        .withIntParameter("configObj.mux", static_cast<int>(ADS1115Mux_t::AIN0_GND))
+        .withIntParameter("configObj.pga", static_cast<int>(ADS1115PGA_t::FSR_2_048V))
+        .withIntParameter("configObj.mode", static_cast<int>(ADS1115Mode_t::SingleShot))
+        .withIntParameter("configObj.dataRate", static_cast<int>(ADS1115DataRate_t::SPS_860))
+        .withIntParameter("configObj.compMode", static_cast<int>(ADS1115CompMode_t::Window))
+        .withIntParameter("configObj.compPolarity", static_cast<int>(ADS1115CompPolarity_t::ActiveLow))
+        .withIntParameter("configObj.compLatch", static_cast<int>(ADS1115CompLatch_t::Latching))
+        .withIntParameter("configObj.compQueue", static_cast<int>(ADS1115CompQueue_t::AssertAfterFourConversions))
+        .andReturnValue(STATUS_OKAY);
+    mock().expectOneCall("ADS1115Channel::setLowThreshold")
+        .withParameter("value", static_cast<int16_t>(ADS1115_CONVERSION_COMPLETE_LO))
+        .andReturnValue(STATUS_OUT_OF_BOUNDS);
+    status = busVoltageModule->initialize(powerMonitorModule);
+    CHECK_EQUAL(STATUS_OUT_OF_BOUNDS, status);
+
+    /* test high threshold out of bounds */
+    mock().expectOneCall("ADS1115::configure")
+        .withIntParameter("configObj.opStatus", static_cast<int>(ADS1115_OperationalStatus_t::Write_No_Effect))
+        .withIntParameter("configObj.mux", static_cast<int>(ADS1115Mux_t::AIN0_GND))
+        .withIntParameter("configObj.pga", static_cast<int>(ADS1115PGA_t::FSR_2_048V))
+        .withIntParameter("configObj.mode", static_cast<int>(ADS1115Mode_t::SingleShot))
+        .withIntParameter("configObj.dataRate", static_cast<int>(ADS1115DataRate_t::SPS_860))
+        .withIntParameter("configObj.compMode", static_cast<int>(ADS1115CompMode_t::Window))
+        .withIntParameter("configObj.compPolarity", static_cast<int>(ADS1115CompPolarity_t::ActiveLow))
+        .withIntParameter("configObj.compLatch", static_cast<int>(ADS1115CompLatch_t::Latching))
+        .withIntParameter("configObj.compQueue", static_cast<int>(ADS1115CompQueue_t::AssertAfterFourConversions))
+        .andReturnValue(STATUS_OKAY);
+    mock().expectOneCall("ADS1115Channel::setLowThreshold")
+        .withParameter("value", static_cast<int16_t>(ADS1115_CONVERSION_COMPLETE_LO))
+        .andReturnValue(STATUS_OKAY);
+    mock().expectOneCall("ADS1115Channel::setHighThreshold")
+        .withParameter("value", static_cast<int16_t>(ADS1115_CONVERSION_COMPLETE_HI))
+        .andReturnValue(STATUS_OUT_OF_BOUNDS);
+    status = busVoltageModule->initialize(powerMonitorModule);
+    CHECK_EQUAL(STATUS_OUT_OF_BOUNDS, status);
+
+    /* test happy path */
+    mock().expectOneCall("ADS1115::configure")
+        .withIntParameter("configObj.opStatus", static_cast<int>(ADS1115_OperationalStatus_t::Write_No_Effect))
+        .withIntParameter("configObj.mux", static_cast<int>(ADS1115Mux_t::AIN0_GND))
+        .withIntParameter("configObj.pga", static_cast<int>(ADS1115PGA_t::FSR_2_048V))
+        .withIntParameter("configObj.mode", static_cast<int>(ADS1115Mode_t::SingleShot))
+        .withIntParameter("configObj.dataRate", static_cast<int>(ADS1115DataRate_t::SPS_860))
+        .withIntParameter("configObj.compMode", static_cast<int>(ADS1115CompMode_t::Window))
+        .withIntParameter("configObj.compPolarity", static_cast<int>(ADS1115CompPolarity_t::ActiveLow))
+        .withIntParameter("configObj.compLatch", static_cast<int>(ADS1115CompLatch_t::Latching))
+        .withIntParameter("configObj.compQueue", static_cast<int>(ADS1115CompQueue_t::AssertAfterFourConversions))
+        .andReturnValue(STATUS_OKAY);
+    mock().expectOneCall("ADS1115Channel::setLowThreshold")
+        .withParameter("value", static_cast<int16_t>(ADS1115_CONVERSION_COMPLETE_LO))
+        .andReturnValue(STATUS_OKAY);
+    mock().expectOneCall("ADS1115Channel::setHighThreshold")
+        .withParameter("value", static_cast<int16_t>(ADS1115_CONVERSION_COMPLETE_HI))
+        .andReturnValue(STATUS_OKAY);
+    status = busVoltageModule->initialize(powerMonitorModule);
+    CHECK_EQUAL(STATUS_OKAY, status);
+
+}
+TEST(BusVoltage_tests, RunAlertISR)
+{
+    /* delete bus voltage module     */
+    mock().expectOneCall("~ADS1115Channel");
     delete busVoltageModule;
     busVoltageModule = nullptr;
+    CHECK(busVoltageModule == nullptr);
 
-    CHECK(busVoltageModule == NULL);
+    /* now create busmodule again with a nullptr for power monitor  */
+    mock().expectOneCall("ADS1115Channel")
+        .ignoreOtherParameters();
+    busVoltageModule = new BusVoltage(*ads1115Module);
+
+    /* initialize bus voltage module with nullptr   */
+    busVoltageModule->initialize(nullptr);
+
+    /* with  nullptr power monitor reference, call isr */
+    sprintf(logBuffer, "PowerMonitor is nullptr\n");
+    mock().expectOneCall("esp_log_write")
+        .withParameter("level", ESP_LOG_ERROR)
+        .withParameter("tag", "BusVoltage")
+        .withParameter("format", logBuffer);
+    (*busVoltageModule).runAlertISR(nullptr);
+
+
+    /* delete bus voltage module     */
+    mock().expectOneCall("~ADS1115Channel");
+    delete busVoltageModule;
+    busVoltageModule = nullptr;
+    CHECK(busVoltageModule == nullptr);
+
+    /* now create busmodule again with a nullptr for power monitor  */
+    mock().expectOneCall("ADS1115Channel")
+        .ignoreOtherParameters();
+    busVoltageModule = new BusVoltage(*ads1115Module);
+
+    /* initialize bus voltage module with nullptr   */
+    mock().expectOneCall("ADS1115::configure")
+        .ignoreOtherParameters()
+        .andReturnValue(STATUS_OKAY);
+    mock().expectOneCall("ADS1115Channel::setLowThreshold")
+        .withParameter("value", static_cast<int16_t>(ADS1115_CONVERSION_COMPLETE_LO))
+        .andReturnValue(STATUS_OKAY);
+    mock().expectOneCall("ADS1115Channel::setHighThreshold")
+        .withParameter("value", static_cast<int16_t>(ADS1115_CONVERSION_COMPLETE_HI))
+        .andReturnValue(STATUS_OKAY);
+    busVoltageModule->initialize(powerMonitorModule);
+
+    /* with  nullptr power monitor reference, call isr */
+    mock().expectOneCall("PowerMonitor::notifyFromISR")
+        .ignoreOtherParameters();
+    (*busVoltageModule).runAlertISR(nullptr);
 }
-
-TEST(BusVoltage_tests, init)
-{
-    Status_t status = busVoltageModule->init();
-    CHECK_EQUAL(STATUS_OKAY, status);
-}
-
-// TEST(PowerMonitor_tests, DestructorInISR)
-// {
-//     /* check power monitor is not null  */
-//     CHECK(powerMonitor != NULL);
-
-//     /*  unhappy path destructor */
-//     mock().expectOneCall("xPortInIsrContext").andReturnValue(1);
-
-//     /* expect an os error to occur */
-//     sprintf(logBuffer, "Error: %i", STATUS_ISR_ERROR);
-//     mock().expectOneCall("esp_log_write")
-//         .withParameter("level", ESP_LOG_ERROR)
-//         .withParameter("tag", "Task")
-//         .withParameter("format", logBuffer);
-    
-// }
-
-// TEST(PowerMonitor_tests, DestructorTaskHdlNull)
-// {
-//     /* check power monitor is not null  */
-//     CHECK(powerMonitor != NULL);
-
-//     /*  unhappy path destructor */
-//     mock().expectOneCall("xPortInIsrContext").andReturnValue(0);
-
-//     mock().expectOneCall("CHECK_POINTER_VALID")
-//         /*  we dont care what is passed into check pointer valid */
-//         .ignoreOtherParameters()
-//         /* but well return false to proceed with other tests */
-//         .andReturnValue(false);
-
-//     /* expect a null pointer error to occur */
-//     sprintf(logBuffer, "Error: %i", STATUS_NULL_POINTER);
-//     mock().expectOneCall("esp_log_write")
-//         .withParameter("level", ESP_LOG_ERROR)
-//         .withParameter("tag", "Task")
-//         .withParameter("format", logBuffer);
-// }
-
-
-// TEST(PowerMonitor_tests, DestructorTaskStateDeleted)
-// {
-//     /* check power monitor is not null  */
-//     CHECK(powerMonitor != NULL);
-
-//     /*  unhappy path destructor */
-//     mock().expectOneCall("xPortInIsrContext").andReturnValue(0);
-
-//     mock().expectOneCall("CHECK_POINTER_VALID")
-//         /*  we dont care what is passed into check pointer valid */
-//         .ignoreOtherParameters()
-//         /* but well return true to proceed with other tests */
-//         .andReturnValue(true);
-
-//     mock().expectOneCall("eTaskGetState")
-//         .ignoreOtherParameters()
-//         .andReturnValue((eTaskState)eDeleted);
-
-//     /* expect a null pointer error to occur */
-//     sprintf(logBuffer, "Error: %i", STATUS_OS_ERROR);
-//     mock().expectOneCall("esp_log_write")
-//         .withParameter("level", ESP_LOG_ERROR)
-//         .withParameter("tag", "Task")
-//         .withParameter("format", logBuffer);
-// }
-
-// TEST(PowerMonitor_tests, DestructorHappyPath)
-// {
-//     expectTeardownHappyPath();
-// }
-
-// TEST(PowerMonitor_tests, initTask)
-// {
-//     /*  Test with non null task handle  */
-//     mock().expectOneCall("CHECK_POINTER_VALID")
-//         /*  we dont care what is passed into check pointer valid */
-//         .ignoreOtherParameters()
-//         /* but well return true for testing purposes    */
-//         .andReturnValue(true);
-//     Status_t ret = powerMonitor->initTask();
-//     CHECK_EQUAL(STATUS_REINIT_ERROR, ret);
-    
-
-//     /*  Test with xport returning in ISR    */
-//     mock().expectOneCall("CHECK_POINTER_VALID")
-//         /*  we dont care what is passed into check pointer valid */
-//         .ignoreOtherParameters()
-//         /* but well return false to proceed with other tests */
-//         .andReturnValue(false);
-//     mock().expectOneCall("xPortInIsrContext").andReturnValue(1);
-//     ret = powerMonitor->initTask();
-//     /* this should return fail but not call any other functions  */
-//     CHECK_EQUAL(STATUS_ISR_ERROR, ret);
-    
-    
-//     /*  expect call to check pointer valid */
-//     mock().expectOneCall("CHECK_POINTER_VALID")
-//         /*  we dont care what is passed into check pointer valid */
-//         .ignoreOtherParameters()
-//         /* but well return false to proceed with other tests */
-//         .andReturnValue(false);
-//     /*  Test with xport returning not in ISR    */
-//     mock().expectOneCall("xPortInIsrContext").andReturnValue(0);
-    
-//     /* return a fail from xtaskcreate   */
-//     mock().expectOneCall("xTaskCreate")
-//     .withBoolParameter("pxTaskCode", true) /* this shoudl return true  since function ptr should not be nullptr */
-//     .withStringParameter("pcName", "PowerMonitor")
-//     .withBoolParameter("usStackDepth", true) /* this should be true if stack size greater than min */
-//     .withPointerParameter("pvParameters", powerMonitor)
-//     .withParameter("uxPriority", ESP_NORMAL_PRIORITY)
-//     .ignoreOtherParameters()
-//     .andReturnValue(pdFAIL);
-    
-//     ret = powerMonitor->initTask();
-    
-//     CHECK_EQUAL(STATUS_OS_ERROR, ret);
-
-
-//     /*  expect call to check pointer valid */
-//     mock().expectOneCall("CHECK_POINTER_VALID")
-//         /*  we dont care what is passed into check pointer valid */
-//         .ignoreOtherParameters()
-//         /* but well return false to proceed with other tests */
-//         .andReturnValue(false);
-//     /*  Test with xport returning not in ISR    */
-//     mock().expectOneCall("xPortInIsrContext").andReturnValue(0);
-    
-//     /* return pass from xtaskcreate */
-//     mock().expectOneCall("xTaskCreate")
-//     .withBoolParameter("pxTaskCode", true) /* this shoudl return true  since function ptr should not be nullptr */
-//     .withStringParameter("pcName", "PowerMonitor")
-//     .withBoolParameter("usStackDepth", true) /* this should be true if stack size greater than min */
-//     .withPointerParameter("pvParameters", powerMonitor)
-//     .withParameter("uxPriority", ESP_NORMAL_PRIORITY)
-//     .ignoreOtherParameters()
-//     .andReturnValue(pdPASS);
-    
-//     ret = powerMonitor->initTask();
-    
-//     CHECK_EQUAL(STATUS_OKAY, ret);
-
-//     /* Setup expectations for teardown  */
-//     expectTeardownHappyPath();
-// }
-
-// TEST(PowerMonitor_tests, runInCurrent)
-// {
-//     /* expect taskRun to be called */
-//     expectRunTwice();  
-    
-//     /*  notification doesnt return any useful value  */
-//     uint32_t notificationValue = 0;
-//     mock().expectOneCall("xTaskNotifyWait")
-//         .withOutputParameterReturning("pulNotificationValue", &notificationValue, sizeof(uint32_t))
-//         .ignoreOtherParameters()
-//         .andReturnValue(pdFALSE);
-
-//     /* expect an os error to occur */
-//     sprintf(logBuffer, "Error: %i", STATUS_OS_ERROR);
-
-//     mock().expectOneCall("esp_log_write")
-//         .withParameter("level", ESP_LOG_ERROR)
-//         .withParameter("tag", "PowerMonitor")
-//         .withParameter("format", logBuffer);
-
-//     mock().expectOneCall("vTaskDelay")
-//         .withParameter("xTicksToDelay", 100 / portTICK_PERIOD_MS);
-    
-//     powerMonitor->runInCurrent();
-
-//     /* run task run once then return    */
-//     expectRunTwice();
-
-//     /*  notification doesnt return any useful value  */
-//     notificationValue = GET_POWER_NOTIFY_BIT;
-//     mock().expectOneCall("xTaskNotifyWait")
-//         .withOutputParameterReturning("pulNotificationValue", &notificationValue, sizeof(uint32_t))
-//         .ignoreOtherParameters()
-//         .andReturnValue(pdTRUE);
-    
-//     /*  expect bus voltage to be called and fail due to hal error*/
-//     mock().expectOneCall("getFilteredVoltage")
-//         .ignoreOtherParameters()
-//         .andReturnValue(STATUS_HAL_ERROR);
-
-//     sprintf(logBuffer, "Error: %i", STATUS_HAL_ERROR);
-//     mock().expectOneCall("esp_log_write")
-//         .withParameter("level", ESP_LOG_ERROR)
-//         .withParameter("tag", "PowerMonitor")
-//         .withParameter("format", logBuffer);
-
-//     mock().expectOneCall("vTaskDelay")
-//         .withParameter("xTicksToDelay", 100 / portTICK_PERIOD_MS);
-    
-//     powerMonitor->runInCurrent();
-
-//     /* run task run once then return    */
-//     expectRunTwice();
-
-//     /*  notification doesnt return any useful value  */
-//     notificationValue = GET_POWER_NOTIFY_BIT;
-//     mock().expectOneCall("xTaskNotifyWait")
-//         .withOutputParameterReturning("pulNotificationValue", &notificationValue, sizeof(uint32_t))
-//         .ignoreOtherParameters()
-//         .andReturnValue(pdTRUE);
-    
-//     /*  expect bus voltage to be called and fail due to queue full */
-//     mock().expectOneCall("getFilteredVoltage")
-//         .ignoreOtherParameters()
-//         .andReturnValue(STATUS_OKAY);
-
-//     /* expect xtaskgettickcount to be called */
-//     mock().expectOneCall("xTaskGetTickCount")
-//         .ignoreOtherParameters()
-//         .andReturnValue(1000 / portTICK_PERIOD_MS);
-    
-//     /* expect networking module queue message to be called */
-//     mock().expectOneCall("queueNetworkingMessage")
-//         .withParameter("message", true) /* this value should not be null */
-//         .andReturnValue(STATUS_QUEUE_FULL);
-
-//     /*  expect bus voltage to be called and fail due to queue full error */
-//     sprintf(logBuffer, "Error: %i", STATUS_QUEUE_FULL);
-//     mock().expectOneCall("esp_log_write")
-//         .withParameter("level", ESP_LOG_ERROR)
-//         .withParameter("tag", "PowerMonitor")
-//         .withParameter("format", logBuffer);
-
-//     mock().expectOneCall("vTaskDelay")
-//         .withParameter("xTicksToDelay", 100 / portTICK_PERIOD_MS);
-    
-//     powerMonitor->runInCurrent();
-
-
-// /******************************************************************************
-//  * Get Filtered Current HAL Error
-//  *****************************************************************************/
-//     /* run task run once then return    */
-//     expectRunTwice();
-
-//     /*  notification doesnt return any useful value  */
-//     notificationValue = GET_POWER_NOTIFY_BIT;
-//     mock().expectOneCall("xTaskNotifyWait")
-//         .withOutputParameterReturning("pulNotificationValue", &notificationValue, sizeof(uint32_t))
-//         .ignoreOtherParameters()
-//         .andReturnValue(pdTRUE);
-    
-//     /*  expect bus voltage to be called and fail due to queue full */
-//     mock().expectOneCall("getFilteredVoltage")
-//         .ignoreOtherParameters()
-//         .andReturnValue(STATUS_OKAY);
-
-//     /* expect xtaskgettickcount to be called */
-//     mock().expectOneCall("xTaskGetTickCount")
-//         .ignoreOtherParameters()
-//         .andReturnValue(1000 / portTICK_PERIOD_MS);
-    
-//     /* expect networking module queue message to be called */
-//     mock().expectOneCall("queueNetworkingMessage")
-//         .withParameter("message", true) /* this value should not be null */
-//         .andReturnValue(STATUS_OKAY);
-
-//     /*  expect bus current to be called and fail due to queue full error */
-//     mock().expectOneCall("getFilteredCurrent")
-//         .ignoreOtherParameters()
-//         .andReturnValue(STATUS_HAL_ERROR);
-
-//     /*  expect log to return hal error */
-//     sprintf(logBuffer, "Error: %i", STATUS_HAL_ERROR);
-//     mock().expectOneCall("esp_log_write")
-//         .withParameter("level", ESP_LOG_ERROR)
-//         .withParameter("tag", "PowerMonitor")
-//         .withParameter("format", logBuffer);
-
-//     mock().expectOneCall("vTaskDelay")
-//         .withParameter("xTicksToDelay", 100 / portTICK_PERIOD_MS);
-    
-//     powerMonitor->runInCurrent();
-
-// /******************************************************************************
-//  * Get Filtered Current Queue Full
-//  *****************************************************************************/
-//     /* run task run once then return    */
-//     expectRunTwice();
-
-//     /*  notification doesnt return any useful value  */
-//     notificationValue = GET_POWER_NOTIFY_BIT;
-//     mock().expectOneCall("xTaskNotifyWait")
-//         .withOutputParameterReturning("pulNotificationValue", &notificationValue, sizeof(uint32_t))
-//         .ignoreOtherParameters()
-//         .andReturnValue(pdTRUE);
-    
-//     /*  expect bus voltage to be called and fail due to queue full */
-//     mock().expectOneCall("getFilteredVoltage")
-//         .ignoreOtherParameters()
-//         .andReturnValue(STATUS_OKAY);
-
-//     /* expect xtaskgettickcount to be called */
-//     mock().expectOneCall("xTaskGetTickCount")
-//         .ignoreOtherParameters()
-//         .andReturnValue(1000 / portTICK_PERIOD_MS);
-    
-//     /* expect networking module queue message to be called */
-//     mock().expectOneCall("queueNetworkingMessage")
-//         .withParameter("message", true) /* this value should not be null */
-//         .andReturnValue(STATUS_OKAY);
-
-//     /*  expect bus current to be called and fail due to queue full error */
-//     mock().expectOneCall("getFilteredCurrent")
-//         .ignoreOtherParameters()
-//         .andReturnValue(STATUS_OKAY);
-
-//     /* expect xtaskgettickcount to be called */
-//     mock().expectOneCall("xTaskGetTickCount")
-//         .ignoreOtherParameters()
-//         .andReturnValue(1000 / portTICK_PERIOD_MS);
-    
-//     /* expect networking module queue message to be called */
-//     mock().expectOneCall("queueNetworkingMessage")
-//         .withParameter("message", true) /* this value should not be null */
-//         .andReturnValue(STATUS_QUEUE_FULL);
-
-//     /*  expect log to return hal error */
-//     sprintf(logBuffer, "Error: %i", STATUS_QUEUE_FULL);
-//     mock().expectOneCall("esp_log_write")
-//         .withParameter("level", ESP_LOG_ERROR)
-//         .withParameter("tag", "PowerMonitor")
-//         .withParameter("format", logBuffer);
-
-//     mock().expectOneCall("vTaskDelay")
-//         .withParameter("xTicksToDelay", 100 / portTICK_PERIOD_MS);
-    
-//     powerMonitor->runInCurrent();
-
-// /******************************************************************************
-//  * Send Power Message Queue Full
-//  *****************************************************************************/
-//     /* run task run once then return    */
-//     expectRunTwice();
-
-//     /*  notification doesnt return any useful value  */
-//     notificationValue = GET_POWER_NOTIFY_BIT;
-//     mock().expectOneCall("xTaskNotifyWait")
-//         .withOutputParameterReturning("pulNotificationValue", &notificationValue, sizeof(uint32_t))
-//         .ignoreOtherParameters()
-//         .andReturnValue(pdTRUE);
-    
-//     /*  expect bus voltage to be called and fail due to queue full */
-//     mock().expectOneCall("getFilteredVoltage")
-//         .ignoreOtherParameters()
-//         .andReturnValue(STATUS_OKAY);
-
-//     /* expect xtaskgettickcount to be called */
-//     mock().expectOneCall("xTaskGetTickCount")
-//         .ignoreOtherParameters()
-//         .andReturnValue(1000 / portTICK_PERIOD_MS);
-    
-//     /* expect networking module queue message to be called */
-//     mock().expectOneCall("queueNetworkingMessage")
-//         .withParameter("message", true) /* this value should not be null */
-//         .andReturnValue(STATUS_OKAY);
-
-//     /*  expect bus current to be called and fail due to queue full error */
-//     mock().expectOneCall("getFilteredCurrent")
-//         .ignoreOtherParameters()
-//         .andReturnValue(STATUS_OKAY);
-
-//     /* expect xtaskgettickcount to be called */
-//     mock().expectOneCall("xTaskGetTickCount")
-//         .ignoreOtherParameters()
-//         .andReturnValue(1000 / portTICK_PERIOD_MS);
-    
-//     /* expect networking module queue message to be called */
-//     mock().expectOneCall("queueNetworkingMessage")
-//         .withParameter("message", true) /* this value should not be null */
-//         .andReturnValue(STATUS_OKAY);
-    
-//     /* expect xtaskgettickcount to be called */
-//     mock().expectOneCall("xTaskGetTickCount")
-//         .ignoreOtherParameters()
-//         .andReturnValue(1000 / portTICK_PERIOD_MS);
-    
-//     /* expect networking module queue message to be called */
-//     mock().expectOneCall("queueNetworkingMessage")
-//         .withParameter("message", true) /* this value should not be null */
-//         .andReturnValue(STATUS_QUEUE_FULL);
-
-//     /*  expect log to return hal error */
-//     sprintf(logBuffer, "Error: %i", STATUS_QUEUE_FULL);
-//     mock().expectOneCall("esp_log_write")
-//         .withParameter("level", ESP_LOG_ERROR)
-//         .withParameter("tag", "PowerMonitor")
-//         .withParameter("format", logBuffer);
-
-//     mock().expectOneCall("vTaskDelay")
-//         .withParameter("xTicksToDelay", 100 / portTICK_PERIOD_MS);
-    
-//     powerMonitor->runInCurrent();
-// /******************************************************************************
-//  * Send Power Message Queue Full
-//  *****************************************************************************/
-//     /* run task run once then return    */
-//     expectRunTwice();
-
-//     /*  notification doesnt return any useful value  */
-//     notificationValue = GET_POWER_NOTIFY_BIT;
-//     mock().expectOneCall("xTaskNotifyWait")
-//         .withOutputParameterReturning("pulNotificationValue", &notificationValue, sizeof(uint32_t))
-//         .ignoreOtherParameters()
-//         .andReturnValue(pdTRUE);
-    
-//     /*  expect bus voltage to be called and fail due to queue full */
-//     mock().expectOneCall("getFilteredVoltage")
-//         .ignoreOtherParameters()
-//         .andReturnValue(STATUS_OKAY);
-
-//     /* expect xtaskgettickcount to be called */
-//     mock().expectOneCall("xTaskGetTickCount")
-//         .ignoreOtherParameters()
-//         .andReturnValue(1000 / portTICK_PERIOD_MS);
-    
-//     /* expect networking module queue message to be called */
-//     mock().expectOneCall("queueNetworkingMessage")
-//         .withParameter("message", true) /* this value should not be null */
-//         .andReturnValue(STATUS_OKAY);
-
-//     /*  expect bus current to be called and fail due to queue full error */
-//     mock().expectOneCall("getFilteredCurrent")
-//         .ignoreOtherParameters()
-//         .andReturnValue(STATUS_OKAY);
-
-//     /* expect xtaskgettickcount to be called */
-//     mock().expectOneCall("xTaskGetTickCount")
-//         .ignoreOtherParameters()
-//         .andReturnValue(1000 / portTICK_PERIOD_MS);
-    
-//     /* expect networking module queue message to be called */
-//     mock().expectOneCall("queueNetworkingMessage")
-//         .withParameter("message", true) /* this value should not be null */
-//         .andReturnValue(STATUS_OKAY);
-    
-//     /* expect xtaskgettickcount to be called */
-//     mock().expectOneCall("xTaskGetTickCount")
-//         .ignoreOtherParameters()
-//         .andReturnValue(1000 / portTICK_PERIOD_MS);
-    
-//     /* expect networking module queue message to be called */
-//     mock().expectOneCall("queueNetworkingMessage")
-//         .withParameter("message", true) /* this value should not be null */
-//         .andReturnValue(STATUS_OKAY);
-
-//     mock().expectOneCall("vTaskDelay")
-//         .withParameter("xTicksToDelay", 100 / portTICK_PERIOD_MS);
-    
-//     powerMonitor->runInCurrent();
-
-//     /* Setup expectations for teardown  */
-//     expectTeardownHappyPath();
-// }
-
-// TEST(PowerMonitor_tests, SuspendAndResume)
-// {
-//     /*  Make a call to task suspend with an unitialized taskhandle  */
-//     mock().expectOneCall("CHECK_POINTER_VALID")
-//         /* this might or might not be false, not important for this test */
-//         .ignoreOtherParameters()
-//         /* we want this to return false to simulate error */
-//         .andReturnValue(false);
-//     Status_t ret = powerMonitor->suspend();
-//     /* if task handle uninitialized this should return null pointer  */
-//     CHECK_EQUAL(STATUS_NULL_POINTER, ret);
-
-
-//     /*  Make a call to task resume with an unitialized taskhandle  */
-//     mock().expectOneCall("CHECK_POINTER_VALID")
-//         /* this might or might not be false, not important for this test */
-//         .ignoreOtherParameters()
-//         /* we want this to return false to simulate error */
-//         .andReturnValue(false);
-//     /*  Test with null task handle    */
-//     ret = powerMonitor->resume();
-//     /* this should return null pointer  */
-//     CHECK_EQUAL(STATUS_NULL_POINTER, ret);
-
-//     /*  Test with xport returning in ISR    */
-//     mock().expectOneCall("CHECK_POINTER_VALID")
-//         /* this might or might not be false, not important for this test */
-//         .ignoreOtherParameters()
-//         /* we want this to return true so we can continue to other tests*/
-//         .andReturnValue(true);
-//     mock().expectOneCall("xPortInIsrContext").andReturnValue(1);
-//     ret = powerMonitor->suspend();
-//     /* this should return fail but not call any other functions  */
-//     CHECK_EQUAL(STATUS_ISR_ERROR, ret);
-
-//     /*  Test with xport returning not in ISR    */
-//     mock().expectOneCall("CHECK_POINTER_VALID")
-//         /* this might or might not be false, not important for this test */
-//         .ignoreOtherParameters()
-//         /* we want this to return true so we can continue to other tests*/
-//         .andReturnValue(true);
-//     mock().expectOneCall("xPortInIsrContext").andReturnValue(0);
-//     /* expect vTaskSuspend to be called */
-//     mock().expectOneCall("vTaskSuspend")
-//         /* we dont care about the value of xTaskToSuspend since we are mocking it */    
-//         .ignoreOtherParameters();
-//     ret = powerMonitor->suspend();
-//     CHECK_EQUAL(STATUS_OKAY, ret);
-
-//     /*  Test with xport returning in ISR    */
-//     mock().expectOneCall("CHECK_POINTER_VALID")
-//         /* this might or might not be false, not important for this test */
-//         .ignoreOtherParameters()
-//         /* we want this to return true so we can continue to other tests*/
-//         .andReturnValue(true);
-//     mock().expectOneCall("xPortInIsrContext").andReturnValue(1);
-//     ret = powerMonitor->resume();
-//     /* this should return in isr error */
-//     CHECK_EQUAL(STATUS_ISR_ERROR, ret);
-
-//     /*  Test with xport returning not in ISR    */
-//     mock().expectOneCall("CHECK_POINTER_VALID")
-//         /* this might or might not be false, not important for this test */
-//         .ignoreOtherParameters()
-//         /* we want this to return true so we can continue to other tests*/
-//         .andReturnValue(true);
-//     mock().expectOneCall("xPortInIsrContext").andReturnValue(0);
-//     /* expect vTaskResume to be called */
-//     mock().expectOneCall("vTaskResume")
-//         /* ignore value into vtask resume since we are mocking handle above */
-//         .ignoreOtherParameters();
-//     ret = powerMonitor->resume();
-//     CHECK_EQUAL(STATUS_OKAY, ret);
-
-
-//     /* Setup expectations for teardown  */
-//     expectTeardownHappyPath();
-// }
