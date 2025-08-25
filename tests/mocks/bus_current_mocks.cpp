@@ -6,6 +6,19 @@ extern "C"
 
 }
 
+
+BusCurrent::BusCurrent(INA219 & _ina219, PowerMonitor * _pm)
+{
+    (void)_ina219;
+    (void)_pm;
+    mock().actualCall("BusCurrent");
+}
+
+BusCurrent::~BusCurrent()
+{
+    mock().actualCall("~BusCurrent");
+}
+
 void BusCurrent::init(void)
 {
     mock().actualCall("initBusCurrent");
