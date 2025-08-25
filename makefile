@@ -75,12 +75,43 @@ MOCKS_SRC_FILES += tests/mocks/freertos_mocks.cpp
 MOCKS_SRC_FILES += tests/mocks/helper_functions_mocks.cpp
 MOCKS_SRC_FILES += tests/mocks/i2c_task_mocks.cpp
 MOCKS_SRC_FILES += tests/mocks/telemetry_mocks.cpp
+ifneq ($(TEST_POWER_MONITOR), true)
+MOCKS_SRC_FILES += tests/mocks/power_monitor_mocks.cpp
+endif
+ifneq ($(TEST_NETWORKING_MODULE), true)
+MOCKS_SRC_FILES += tests/mocks/networking_mocks.cpp
+endif
+ifneq ($(TEST_TASK), true)
+MOCKS_SRC_FILES += tests/mocks/task_mocks.cpp
+endif
 ifneq ($(TEST_BUS_VOLTAGE), true)
 MOCKS_SRC_FILES += tests/mocks/bus_voltage_mocks.cpp
+endif
+ifneq ($(TEST_BUS_CURRENT), true)
+MOCKS_SRC_FILES += tests/mocks/bus_current_mocks.cpp
+endif
+ifneq ($(TEST_ADS1115_CHANNEL), true)
+MOCKS_SRC_FILES += tests/mocks/ads1115_channel_mocks.cpp
 endif
 ifneq ($(TEST_ADS1115), true)
 MOCKS_SRC_FILES += tests/mocks/ads1115_mocks.cpp
 endif
+ifneq ($(TEST_INA219), true)
+MOCKS_SRC_FILES += tests/mocks/ina219_mocks.cpp
+endif
+ifneq ($(TEST_I2C_DEVICE), true)
+MOCKS_SRC_FILES += tests/mocks/i2c_device_mocks.cpp
+endif
+ifneq ($(TEST_INTERRUPT_BASE), true)
+MOCKS_SRC_FILES += tests/mocks/interrupt_base_mocks.cpp
+endif
+ifneq ($(TEST_GPIO), true)
+MOCKS_SRC_FILES += tests/mocks/gpio_mocks.cpp
+endif
+
+
+
+
 
 # MOCKS_SRC_DIRS += tests/mocks
 
