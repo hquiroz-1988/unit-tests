@@ -26,8 +26,11 @@ endif
 #
 ifeq ($(TEST_POWER_MONITOR), true)
 SRC_FILES += ../solar_meter/components/application/power_monitor.cpp
-SRC_FILES += ../solar_meter/components/common/Task.cpp
 endif
+
+ifeq ($(TEST_TASK), true)
+SRC_FILES += ../solar_meter/components/common/Task.cpp
+endif 
 
 ifeq ($(TEST_BUS_VOLTAGE), true)
 SRC_FILES += ../solar_meter/components/application/bus_voltage.cpp
@@ -81,9 +84,11 @@ endif
 ifneq ($(TEST_NETWORKING_MODULE), true)
 MOCKS_SRC_FILES += tests/mocks/networking_mocks.cpp
 endif
-ifneq ($(TEST_TASK), true)
+
+ifneq ($(and $(ifneq $(TEST_TASK),true),$(ifneq $(TEST_POWER_MONITOR),true)),true)
 MOCKS_SRC_FILES += tests/mocks/task_mocks.cpp
 endif
+
 ifneq ($(TEST_BUS_VOLTAGE), true)
 MOCKS_SRC_FILES += tests/mocks/bus_voltage_mocks.cpp
 endif
@@ -108,10 +113,6 @@ endif
 ifneq ($(TEST_GPIO), true)
 MOCKS_SRC_FILES += tests/mocks/gpio_mocks.cpp
 endif
-
-
-
-
 
 # MOCKS_SRC_DIRS += tests/mocks
 
@@ -168,7 +169,9 @@ INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/log/include
 #
 # This is kind of a kludge, but it causes the
 # .o and .d files to be put under objs.
-CPPUTEST_OBJS_DIR = test-obj
+# Need to add folder under test object to get coverage files to generate
+# in correct location
+CPPUTEST_OBJS_DIR = test-obj/1
 
 CPPUTEST_LIB_DIR = test-lib
 
