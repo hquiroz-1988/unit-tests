@@ -24,19 +24,19 @@ Status_t ADS1115Channel::init(void)
 
 Status_t ADS1115Channel::startConversion(void)
 {
-    return static_cast<Status_t>(mock().actualCall("ADS1115Channel_startConversion").returnIntValueOrDefault(STATUS_OKAY));
+    return static_cast<Status_t>(mock().actualCall("ADS1115Channel::startConversion").returnIntValueOrDefault(STATUS_OKAY));
 }
 
 Status_t ADS1115Channel::getConversion(float & value)
 {
-    return static_cast<Status_t>(mock().actualCall("ADS1115Channel_getConversion")
+    return static_cast<Status_t>(mock().actualCall("ADS1115Channel::getConversion")
           .withOutputParameter("value", &value)
           .returnIntValueOrDefault(STATUS_OKAY));
 }
 
 Status_t ADS1115Channel::getFilteredVoltage(float * value)
 {
-    return static_cast<Status_t>(mock().actualCall("ADS1115Channel_getFilteredVoltage")
+    return static_cast<Status_t>(mock().actualCall("ADS1115Channel::getFilteredVoltage")
           .withOutputParameter("value", value)
           .returnIntValueOrDefault(STATUS_OKAY));
 }
@@ -71,7 +71,7 @@ Status_t ADS1115Channel::getHighThreshold(int16_t & value) const
 
 void ADS1115Channel::runAlertISR(void * arg)
 {
-    mock().actualCall("ADS1115Channel_runAlertISR")
+    mock().actualCall("ADS1115Channel::runAlertISR")
           .withParameter("arg", arg);
 }
 
