@@ -8,6 +8,7 @@ COMMAND=${1:-/bin/bash}
 
 sudo docker run \
   --rm \
+  --user $(id -u):$(id -g) \
   --name cpputest-runner \
   --volume "${HOST_WORKDIR}":"${WORKDIR}" \
   --workdir "${WORKDIR}" \
