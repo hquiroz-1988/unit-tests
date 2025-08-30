@@ -24,8 +24,8 @@ endif
 # SRC_DIRS specifies directories containing
 # production code C and CPP files.
 #
-SRC_FILES += ../solar_meter/Source/Application/power_monitor.cpp
-SRC_FILES += ../solar_meter/Source/Middleware/Task.cpp
+SRC_FILES += ../solar_meter/components/application/power_monitor.cpp
+SRC_FILES += ../solar_meter/components/common/Task.cpp
 # SRC_DIRS += ../solar_meter/Source/Application	
 # SRC_DIRS += ../solar_meter/Source/Middleware	
 
@@ -75,11 +75,10 @@ INCLUDE_DIRS += tests/fff
 INCLUDE_DIRS += tests/includes
 
 # Solar Meter Source Includes
-INCLUDE_DIRS += ../solar_meter/Source/Devices/includes
-INCLUDE_DIRS += ../solar_meter/Source/Peripherals/includes
-INCLUDE_DIRS += ../solar_meter/Source/Common
-INCLUDE_DIRS += ../solar_meter/Source/Application/includes
-INCLUDE_DIRS += ../solar_meter/Source/Middleware/includes
+INCLUDE_DIRS += ../solar_meter/components/device_drivers/include
+INCLUDE_DIRS += ../solar_meter/components/peripheral_drivers/include
+INCLUDE_DIRS += ../solar_meter/components/common/include
+INCLUDE_DIRS += ../solar_meter/components/application/include
 
 # ESP8266_RTOS_SDK includes
 INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/freertos/port/esp8266/include
