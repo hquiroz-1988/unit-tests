@@ -49,7 +49,8 @@ extern "C"
 /*******************************************************************************
  * GLOBAL FUNCTIONS
  *******************************************************************************/
-Gpio::Gpio(GpioPin _pin) : pin(_pin)
+Gpio::Gpio(GpioPin _pin) 
+: gpioPin(_pin)
 {
     mock().actualCall("Gpio").withIntParameter("pin", static_cast<int>(_pin));
 }
