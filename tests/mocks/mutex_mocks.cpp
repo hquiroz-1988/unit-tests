@@ -11,7 +11,7 @@
  * INCLUDES
 *******************************************************************************/
 #include "CppUTestExt/MockSupport.h"
-#include "gpio.hpp"
+#include "mutex.hpp"
 
 extern "C"
 {
@@ -49,29 +49,31 @@ extern "C"
 /*******************************************************************************
  * GLOBAL FUNCTIONS
  *******************************************************************************/
-Gpio::Gpio(GpioPin _pin) 
-: gpioPin(_pin)
+Mutex::Mutex()
 {
-    mock().actualCall("Gpio::Gpio").withIntParameter("pin", static_cast<int>(_pin));
+    mock().actualCall("Mutex::Mutex");
 }
 
-Gpio::~Gpio()
+Mutex::~Mutex()
 {
-    mock().actualCall("Gpio::~Gpio");
+    mock().actualCall("Mutex::~Mutex");
 }
 
-
-gpio_pullup_t Gpio::getPullup()
+Status_t Mutex::create()
 {
-    return static_cast<gpio_pullup_t>(mock()
-    .actualCall("Gpio::getPullup").
-    returnIntValueOrDefault((int)GPIO_PULLUP_DISABLE));
+    return static_cast<Status_t>(mock().actualCall("Mutex::create")
+    .returnIntValueOrDefault(STATUS_UNKNOWN));
 }
 
-gpio_num_t Gpio::getPin(void)
+Status_t Mutex::lock(uint32_t timeout)
 {
-    return static_cast<gpio_num_t>(mock()
-    .actualCall("Gpio::getPin").
-    returnIntValueOrDefault((int)GPIO_NUM_0));
+    return static_cast<Status_t>(mock().actualCall("Mutex::lock")
+    .withParameter("timeout", timeout)
+    .returnIntValueOrDefault(STATUS_UNKNOWN));
 }
 
+Status_t Mutex::unlock()
+{
+    return static_cast<Status_t>(mock().actualCall("Mutex::unlock")
+    .returnIntValueOrDefault(STATUS_UNKNOWN));
+}
