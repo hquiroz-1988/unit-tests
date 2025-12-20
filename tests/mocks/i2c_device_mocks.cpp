@@ -51,10 +51,10 @@ extern "C"
  *******************************************************************************/
 I2CDevice::I2CDevice(void)
 {
-    mock().actualCall("I2CDevice");
+    mock().actualCall("I2CDevice::I2CDevice");
 }
 
 I2CDevice::~I2CDevice()
 {
-    mock().actualCall("~I2CDevice");
+    mock().actualCall("I2CDevice::~I2CDevice");
 }

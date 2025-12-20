@@ -43,4 +43,4 @@ Debug
 *.user
 *.sublime-*
 
-coverage/**
+coverage/*

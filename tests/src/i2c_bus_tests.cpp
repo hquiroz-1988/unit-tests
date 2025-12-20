@@ -15,15 +15,19 @@ TEST_GROUP(I2CBus_tests)
     Gpio * sclPin = nullptr;
     I2CBus * i2cBusModule = nullptr;
     i2c_port_t i2cPort = I2C_NUM_0;
+    I2CDevice * i2cDevice = nullptr;
+    
     void setup()
     {
         mock().expectOneCall("Gpio::Gpio").ignoreOtherParameters();
         mock().expectOneCall("Gpio::Gpio").ignoreOtherParameters();
         mock().expectOneCall("Mutex::Mutex").ignoreOtherParameters();
+        mock().expectOneCall("I2CDevice::I2CDevice").ignoreOtherParameters();
 
         sdaPin = new Gpio(GpioPin::GPIO_PIN_NONE);
         sclPin = new Gpio(GpioPin::GPIO_PIN_NONE);
         i2cBusModule = new I2CBus(*sdaPin, *sclPin, i2cPort);
+        i2cDevice = new I2CDevice();
     }
 
     void teardown()
@@ -31,10 +35,12 @@ TEST_GROUP(I2CBus_tests)
         mock().expectOneCall("Gpio::~Gpio").ignoreOtherParameters();
         mock().expectOneCall("Gpio::~Gpio").ignoreOtherParameters();
         mock().expectOneCall("Mutex::~Mutex").ignoreOtherParameters();
+        mock().expectOneCall("I2CDevice::~I2CDevice").ignoreOtherParameters();
 
         delete i2cBusModule;
         delete sclPin;
         delete sdaPin;
+        delete i2cDevice;
 
         mock().checkExpectations();
         mock().clear();
@@ -247,3 +253,35 @@ TEST(I2CBus_tests, Initialize)
 
     CHECK_EQUAL(STATUS_OKAY, status);
 }
+
+
+TEST(I2CBus_tests, AddDevice)
+{
+    Status_t status = STATUS_OKAY;
+    I2CDevice * tempDevice = nullptr;
+
+    status = i2cBusModule->addDevice(tempDevice);
+
+    CHECK_EQUAL(STATUS_NULL_POINTER, status);
+    
+    status = i2cBusModule->addDevice(i2cDevice);
+
+    CHECK_EQUAL(STATUS_OKAY, status);
+
+    status = i2cBusModule->addDevice(i2cDevice);
+
+    CHECK_EQUAL(STATUS_OKAY, status);
+
+    status = i2cBusModule->addDevice(i2cDevice);
+
+    CHECK_EQUAL(STATUS_OKAY, status);
+
+    status = i2cBusModule->addDevice(i2cDevice);
+
+    CHECK_EQUAL(STATUS_OKAY, status);
+
+    status = i2cBusModule->addDevice(i2cDevice);
+
+    CHECK_EQUAL(STATUS_OUT_OF_BOUNDS, status);
+}
+
