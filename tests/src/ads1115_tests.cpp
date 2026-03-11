@@ -42,9 +42,9 @@ TEST(ADS1115_tests, Init)
     mock().expectOneCall("xTaskGetCurrentTaskHandle").andReturnValue((void*)nullptr);
     // mock().expectOneCall("i2c_cmd_link_delete").withPointerParameter("cmd_handle", (void *)nullptr); 
 
-    ads1115->init_ads1115();
+    ads1115->initialize();
 
-    // Assuming init_ads1115 does not return a value, we can check if it runs without errors
+    // Assuming initialize does not return a value, we can check if it runs without errors
     CHECK(true); // Placeholder for actual checks if needed
 }
 
