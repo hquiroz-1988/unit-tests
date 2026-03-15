@@ -6,14 +6,26 @@ extern "C"
 
 }
 
-void BusVoltage::init(void)
+BusVoltage::BusVoltage(ADS1115 & _ads1115) : ADS1115Channel(_ads1115)
 {
-    mock().actualCall("initBusVoltage");
+    mock().actualCall("BusVoltage::BusVoltage")
+    .withParameter("_ads1115", &_ads1115);
 }
 
-Status_t BusVoltage::getFilteredVoltage(float * value)
+BusVoltage::~BusVoltage()
 {
-    return static_cast<Status_t>(mock().actualCall("getFilteredVoltage")
-          .withOutputParameter("value", value)
-          .returnIntValueOrDefault(STATUS_UNKNOWN));
+    mock().actualCall("BusVoltage::~BusVoltage");
+}
+
+Status_t BusVoltage::initialize(PowerMonitor *_pm)
+{
+    return static_cast<Status_t>(mock().actualCall("BusVoltage::initialize")
+    .withPointerParameter("_pm", _pm)
+    .returnIntValueOrDefault(STATUS_UNKNOWN));
+}
+
+void BusVoltage::runAlertISR(void * arg)
+{
+    mock().actualCall("BusVoltage::runAlertISR")
+    .withParameter("arg", arg);
 }

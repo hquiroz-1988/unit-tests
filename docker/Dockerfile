@@ -4,7 +4,8 @@ FROM gcc:12.2.0
 WORKDIR /opt/cpputest
 
 
-RUN git clone --depth 1 --branch v4.0 https://github.com/cpputest/cpputest.git .
+RUN git clone https://github.com/cpputest/cpputest.git . && \
+    git checkout aa49f2bfef314715c7c12c806bb44f3b85266d60
 RUN apt-get update && \
     apt-get install -y lcov && \
     apt-get install -y nano

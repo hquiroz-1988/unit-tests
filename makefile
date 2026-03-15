@@ -24,10 +24,27 @@ endif
 # SRC_DIRS specifies directories containing
 # production code C and CPP files.
 #
+ifeq ($(TEST_POWER_MONITOR), true)
 SRC_FILES += ../solar_meter/components/application/power_monitor.cpp
+endif
+
+ifeq ($(TEST_TASK), true)
 SRC_FILES += ../solar_meter/components/common/Task.cpp
-# SRC_DIRS += ../solar_meter/Source/Application	
-# SRC_DIRS += ../solar_meter/Source/Middleware	
+endif 
+
+ifeq ($(TEST_BUS_VOLTAGE), true)
+SRC_FILES += ../solar_meter/components/application/bus_voltage.cpp
+endif
+
+ifeq ($(TEST_ADS1115), true)
+SRC_FILES += ../solar_meter/components/device_drivers/ads1115.cpp
+endif
+
+ifeq ($(TEST_I2C_BUS), true)
+SRC_FILES += ../solar_meter/components/peripheral_drivers/i2c_bus.cpp
+endif
+
+# SRC_DIRS += 
 
 # --- TEST_SRC_FILES and TEST_SRC_DIRS ---
 # Test files are always included in the build.
@@ -40,21 +57,86 @@ SRC_FILES += ../solar_meter/components/common/Task.cpp
 
 # Test Source Files
 TEST_SRC_FILES += tests/AllTests.cpp
-# TEST_SRC_FILES += tests/src/ads1115_tests.cpp # TODO: uncomment when ads1115 tests are ready
+
+ifeq ($(TEST_POWER_MONITOR), true)
 TEST_SRC_FILES += tests/src/power_monitor_tests.cpp
+endif
+
+ifeq ($(TEST_BUS_VOLTAGE), true)
+TEST_SRC_FILES += tests/src/bus_voltage_tests.cpp
+endif
+
+ifeq ($(TEST_ADS1115), true)
+TEST_SRC_FILES += tests/src/ads1115_tests.cpp
+endif
+
+ifeq ($(TEST_I2C_BUS), true)
+TEST_SRC_FILES += tests/src/i2c_bus_tests.cpp
+endif
 
 # Test Source Directories
 # TEST_SRC_DIRS += tests
-
-#	tests/example-fff \
-#	tests/fff \
 
 # --- MOCKS_SRC_DIRS ---
 # MOCKS_SRC_DIRS specifies a directories where you can put your
 # mocks, stubs and fakes.  You can also just put them
 # in TEST_SRC_DIRS
-MOCKS_SRC_DIRS += tests/mocks
+MOCKS_SRC_FILES += tests/mocks/esp_log_mocks.cpp
+MOCKS_SRC_FILES += tests/mocks/freertos_mocks.cpp
+MOCKS_SRC_FILES += tests/mocks/helper_functions_mocks.cpp
+MOCKS_SRC_FILES += tests/mocks/i2c_mocks.cpp
+MOCKS_SRC_FILES += tests/mocks/telemetry_mocks.cpp
+MOCKS_SRC_FILES += tests/mocks/mutex_mocks.cpp
 
+ifneq ($(TEST_POWER_MONITOR), true)
+MOCKS_SRC_FILES += tests/mocks/power_monitor_mocks.cpp
+endif
+
+ifneq ($(TEST_NETWORKING_MODULE), true)
+MOCKS_SRC_FILES += tests/mocks/networking_mocks.cpp
+endif
+
+ifneq ($(and $(ifneq $(TEST_TASK),true),$(ifneq $(TEST_POWER_MONITOR),true)),true)
+MOCKS_SRC_FILES += tests/mocks/task_mocks.cpp
+endif
+
+ifneq ($(TEST_BUS_VOLTAGE), true)
+MOCKS_SRC_FILES += tests/mocks/bus_voltage_mocks.cpp
+endif
+
+ifneq ($(TEST_BUS_CURRENT), true)
+MOCKS_SRC_FILES += tests/mocks/bus_current_mocks.cpp
+endif
+
+ifneq ($(TEST_ADS1115_CHANNEL), true)
+MOCKS_SRC_FILES += tests/mocks/ads1115_channel_mocks.cpp
+endif
+
+ifneq ($(TEST_ADS1115), true)
+MOCKS_SRC_FILES += tests/mocks/ads1115_mocks.cpp
+endif
+
+ifneq ($(TEST_INA219), true)
+MOCKS_SRC_FILES += tests/mocks/ina219_mocks.cpp
+endif
+
+ifneq ($(TEST_I2C_DEVICE), true)
+MOCKS_SRC_FILES += tests/mocks/i2c_device_mocks.cpp
+endif
+
+ifneq ($(TEST_INTERRUPT_BASE), true)
+MOCKS_SRC_FILES += tests/mocks/interrupt_base_mocks.cpp
+endif
+
+ifneq ($(TEST_GPIO), true)
+MOCKS_SRC_FILES += tests/mocks/gpio_mocks.cpp
+endif
+
+ifneq ($(TEST_I2C_BUS), true)
+MOCKS_SRC_FILES += tests/mocks/i2c_bus_mocks.cpp
+endif
+
+# MOCKS_SRC_DIRS += tests/mocks
 
 # Turn on CppUMock
 CPPUTEST_USE_EXTENSIONS = Y
@@ -87,6 +169,7 @@ INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/freertos/include
 INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/freertos/include/freertos
 INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/freertos/include/freertos/private
 INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/esp8266/include
+INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/esp8266/include/driver
 INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/esp_common/include
 INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/heap/include
 INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/heap/port/esp8266/include
@@ -109,7 +192,9 @@ INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/log/include
 #
 # This is kind of a kludge, but it causes the
 # .o and .d files to be put under objs.
-CPPUTEST_OBJS_DIR = test-obj
+# Need to add folder under test object to get coverage files to generate
+# in correct location
+CPPUTEST_OBJS_DIR = test-obj/1
 
 CPPUTEST_LIB_DIR = test-lib
 
@@ -170,5 +255,7 @@ CPPUTEST_EXE_FLAGS += -c
 #LD_LIBRARIES += -lm
 
 # Look at $(CPPUTEST_HOME)/build/MakefileWorker.mk for more controls
+# echo $(MOCKS_SRC_FILES)
+$(info MOCKS_SRC_FILES: $(MOCKS_SRC_FILES))
 
 include $(CPPUTEST_HOME)/build/MakefileWorker.mk

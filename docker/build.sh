@@ -2,7 +2,7 @@
 
 # If you are building your own image, you should change this name.
 # If you don't have a docker hub account, make up a name and use the container locally.
-DOCKER_HUB_USER_ID=jwgrenning
+DOCKER_HUB_USER_ID=hq
 TAG=$DOCKER_HUB_USER_ID/cpputest-runner
 
 time sudo docker build -f $(dirname $0)/Dockerfile \
