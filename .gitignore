@@ -42,4 +42,5 @@ Debug
 *.cache
 *.user
 *.sublime-*
-
+*.html
+coverage/*

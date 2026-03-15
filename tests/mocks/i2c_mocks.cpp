@@ -1,12 +1,10 @@
 #include "CppUTestExt/MockSupport.h"
 
-#include "driver/i2c.h"
+#include "i2c.h"
 
 
 #include <stdint.h>
 #include <stddef.h>
-
-extern "C" {
 
 void* i2cQueueHdl = nullptr;
 
@@ -68,4 +66,19 @@ esp_err_t i2c_master_cmd_begin(i2c_port_t i2c_num, i2c_cmd_handle_t cmd_handle, 
         .returnIntValueOrDefault(0);
 }
 
+esp_err_t i2c_param_config(i2c_port_t i2c_num, const i2c_config_t *i2c_conf)
+{
+    return static_cast<esp_err_t>(mock().actualCall("i2c_param_config")
+        .withParameter("i2c_num", i2c_num)
+        .withPointerParameter("i2c_conf", (void*)i2c_conf)
+        .returnIntValueOrDefault(ESP_FAIL));
+}
+
+
+esp_err_t i2c_driver_install(i2c_port_t i2c_num, i2c_mode_t mode)
+{
+    return static_cast<esp_err_t>(mock().actualCall("i2c_driver_install")
+        .withParameter("i2c_num", i2c_num)
+        .withParameter("mode", mode)
+        .returnIntValueOrDefault(ESP_FAIL));
 }

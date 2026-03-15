@@ -40,6 +40,10 @@ ifeq ($(TEST_ADS1115), true)
 SRC_FILES += ../solar_meter/components/device_drivers/ads1115.cpp
 endif
 
+ifeq ($(TEST_I2C_BUS), true)
+SRC_FILES += ../solar_meter/components/peripheral_drivers/i2c_bus.cpp
+endif
+
 # SRC_DIRS += 
 
 # --- TEST_SRC_FILES and TEST_SRC_DIRS ---
@@ -66,6 +70,10 @@ ifeq ($(TEST_ADS1115), true)
 TEST_SRC_FILES += tests/src/ads1115_tests.cpp
 endif
 
+ifeq ($(TEST_I2C_BUS), true)
+TEST_SRC_FILES += tests/src/i2c_bus_tests.cpp
+endif
+
 # Test Source Directories
 # TEST_SRC_DIRS += tests
 
@@ -76,11 +84,14 @@ endif
 MOCKS_SRC_FILES += tests/mocks/esp_log_mocks.cpp
 MOCKS_SRC_FILES += tests/mocks/freertos_mocks.cpp
 MOCKS_SRC_FILES += tests/mocks/helper_functions_mocks.cpp
-MOCKS_SRC_FILES += tests/mocks/i2c_task_mocks.cpp
+MOCKS_SRC_FILES += tests/mocks/i2c_mocks.cpp
 MOCKS_SRC_FILES += tests/mocks/telemetry_mocks.cpp
+MOCKS_SRC_FILES += tests/mocks/mutex_mocks.cpp
+
 ifneq ($(TEST_POWER_MONITOR), true)
 MOCKS_SRC_FILES += tests/mocks/power_monitor_mocks.cpp
 endif
+
 ifneq ($(TEST_NETWORKING_MODULE), true)
 MOCKS_SRC_FILES += tests/mocks/networking_mocks.cpp
 endif
@@ -92,26 +103,37 @@ endif
 ifneq ($(TEST_BUS_VOLTAGE), true)
 MOCKS_SRC_FILES += tests/mocks/bus_voltage_mocks.cpp
 endif
+
 ifneq ($(TEST_BUS_CURRENT), true)
 MOCKS_SRC_FILES += tests/mocks/bus_current_mocks.cpp
 endif
+
 ifneq ($(TEST_ADS1115_CHANNEL), true)
 MOCKS_SRC_FILES += tests/mocks/ads1115_channel_mocks.cpp
 endif
+
 ifneq ($(TEST_ADS1115), true)
 MOCKS_SRC_FILES += tests/mocks/ads1115_mocks.cpp
 endif
+
 ifneq ($(TEST_INA219), true)
 MOCKS_SRC_FILES += tests/mocks/ina219_mocks.cpp
 endif
+
 ifneq ($(TEST_I2C_DEVICE), true)
 MOCKS_SRC_FILES += tests/mocks/i2c_device_mocks.cpp
 endif
+
 ifneq ($(TEST_INTERRUPT_BASE), true)
 MOCKS_SRC_FILES += tests/mocks/interrupt_base_mocks.cpp
 endif
+
 ifneq ($(TEST_GPIO), true)
 MOCKS_SRC_FILES += tests/mocks/gpio_mocks.cpp
+endif
+
+ifneq ($(TEST_I2C_BUS), true)
+MOCKS_SRC_FILES += tests/mocks/i2c_bus_mocks.cpp
 endif
 
 # MOCKS_SRC_DIRS += tests/mocks
@@ -147,6 +169,7 @@ INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/freertos/include
 INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/freertos/include/freertos
 INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/freertos/include/freertos/private
 INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/esp8266/include
+INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/esp8266/include/driver
 INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/esp_common/include
 INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/heap/include
 INCLUDE_DIRS += ../ESP8266_RTOS_SDK/components/heap/port/esp8266/include
